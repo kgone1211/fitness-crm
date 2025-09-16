@@ -1,0 +1,42 @@
+{
+  "app_id": "app_CG40lYJTdvm70y",
+  "name": "FitnessCRM",
+  "description": "A comprehensive fitness CRM application for trainers to manage clients, track workouts, and monitor progress.",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "homepage": "https://your-domain.com",
+  "icon": "https://your-domain.com/icon.png",
+  "screenshots": [
+    "https://your-domain.com/screenshot1.png",
+    "https://your-domain.com/screenshot2.png"
+  ],
+  "categories": ["fitness", "crm", "health"],
+  "tags": ["fitness", "trainer", "workout", "crm", "health"],
+  "pricing": {
+    "type": "free",
+    "price": 0,
+    "currency": "USD"
+  },
+  "permissions": [
+    "read:users",
+    "write:users",
+    "read:companies",
+    "write:companies"
+  ],
+  "webhooks": [
+    {
+      "url": "https://your-domain.com/api/webhooks/whop",
+      "events": ["user.created", "user.updated", "user.deleted"]
+    }
+  ],
+  "redirect_uris": [
+    "https://your-domain.com/auth/callback",
+    "http://localhost:3000/auth/callback"
+  ],
+  "scopes": [
+    "read:users",
+    "write:users",
+    "read:companies",
+    "write:companies"
+  ]
+}
