@@ -16,6 +16,7 @@ interface WhopIntegrationProps {
 
 export function WhopIntegration({ children }: WhopIntegrationProps) {
   const [isWhopReady, setIsWhopReady] = useState(false);
+  const [timeoutReached, setTimeoutReached] = useState(false);
 
   useEffect(() => {
     // Check if we're running in Whop context
@@ -24,10 +25,12 @@ export function WhopIntegration({ children }: WhopIntegrationProps) {
       const isWhopEnvironment = 
         window.location.hostname.includes('whop.com') ||
         window.location.hostname.includes('whop.io') ||
-        process.env.NODE_ENV === 'production' ||
-        window.location.search.includes('whop=true');
+        window.location.search.includes('whop=true') ||
+        window.location.search.includes('whop-dev-user-token');
       
       if (isWhopEnvironment) {
+        console.log('Whop environment detected, waiting for SDK...');
+        
         // Listen for Whop ready event
         const handleWhopReady = () => {
           console.log('Whop SDK ready event received');
@@ -36,6 +39,7 @@ export function WhopIntegration({ children }: WhopIntegrationProps) {
         
         // Check if already ready
         if (window.whop || window.Whop) {
+          console.log('Whop SDK already available');
           setIsWhopReady(true);
         } else {
           // Listen for ready event
@@ -44,19 +48,24 @@ export function WhopIntegration({ children }: WhopIntegrationProps) {
           // Fallback: check periodically
           const checkInterval = setInterval(() => {
             if (window.whop || window.Whop) {
+              console.log('Whop SDK detected via polling');
               setIsWhopReady(true);
               clearInterval(checkInterval);
             }
-          }, 100);
+          }, 200);
           
-          // Cleanup after 10 seconds
+          // Timeout after 5 seconds to prevent infinite loading
           setTimeout(() => {
+            console.log('Whop SDK timeout reached, proceeding anyway');
             clearInterval(checkInterval);
             window.removeEventListener('whop:ready', handleWhopReady);
-          }, 10000);
+            setTimeoutReached(true);
+            setIsWhopReady(true);
+          }, 5000);
         }
       } else {
-        // For local development, proceed immediately
+        // For local development or non-Whop environments, proceed immediately
+        console.log('Non-Whop environment, proceeding immediately');
         setIsWhopReady(true);
       }
     } else {
@@ -71,6 +80,11 @@ export function WhopIntegration({ children }: WhopIntegrationProps) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading Whop integration...</p>
+          {timeoutReached && (
+            <p className="mt-2 text-sm text-yellow-600">
+              Taking longer than expected, continuing anyway...
+            </p>
+          )}
         </div>
       </div>
     );
