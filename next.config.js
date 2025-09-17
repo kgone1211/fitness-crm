@@ -16,8 +16,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   
-  // Server external packages
-  serverExternalPackages: [],
+  // Ensure proper build output for Vercel
+  outputFileTracingRoot: process.cwd(),
 };
 
 module.exports = nextConfig;
