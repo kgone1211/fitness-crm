@@ -1,6 +1,5 @@
 import Layout from '@/components/Layout';
 import Dashboard from '@/components/Dashboard';
-import { WhopApp } from '@/components/WhopApp';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export default function Home() {
@@ -9,11 +8,9 @@ export default function Home() {
 
   return (
     <ThemeProvider>
-      <WhopApp>
-        <Layout>
-          <Dashboard trainerId={trainerId} />
-        </Layout>
-      </WhopApp>
+      <Layout>
+        <Dashboard trainerId={trainerId} />
+      </Layout>
     </ThemeProvider>
   );
 }
