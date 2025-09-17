@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable static export for Whop deployment
-  output: 'export',
+  // Remove static export for Vercel deployment
+  // output: 'export',
   trailingSlash: true,
   
-  // Image optimization for static export
+  // Image optimization
   images: {
-    unoptimized: true,
+    domains: ['images.unsplash.com', 'via.placeholder.com'],
   },
   
   eslint: {
