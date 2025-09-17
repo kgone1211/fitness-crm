@@ -2,92 +2,74 @@
 (function() {
   'use strict';
   
+  console.log('Whop SDK script loaded');
+  
   // Check if we're in a Whop environment
   function isWhopEnvironment() {
-    return (
-      window.location.hostname.includes('whop.com') ||
-      window.location.hostname.includes('whop.io') ||
-      window.parent !== window ||
-      window.location.search.includes('whop=true')
-    );
+    return window.location.hostname.includes('whop.com') ||
+           window.location.hostname.includes('whop.io') ||
+           window.location.search.includes('whop-dev-user-token') ||
+           window.location.search.includes('whop=true');
+  }
+  
+  // Mock Whop SDK for development and fallback
+  function createMockWhopSDK() {
+    return {
+      getUser: async () => {
+        console.log('Mock Whop getUser called');
+        return {
+          id: 'user_123',
+          username: 'John Trainer',
+          email: 'trainer@example.com',
+          name: 'John Trainer'
+        };
+      },
+      getCompany: async () => {
+        console.log('Mock Whop getCompany called');
+        return {
+          id: 'biz_123',
+          name: 'Fitness Company',
+          domain: 'fitness-company.com'
+        };
+      },
+      getPermissions: async () => {
+        console.log('Mock Whop getPermissions called');
+        return ['read:users', 'write:users'];
+      },
+      isAuthenticated: () => {
+        return true;
+      }
+    };
   }
   
   // Initialize Whop SDK
-  function initWhopSDK() {
-    if (!isWhopEnvironment()) {
-      console.log('Not in Whop environment, skipping SDK initialization');
-      return;
+  function initializeWhop() {
+    if (isWhopEnvironment()) {
+      console.log('Whop environment detected, loading real SDK...');
+      
+      // Try to load the real Whop SDK
+      if (typeof window.Whop !== 'undefined') {
+        console.log('Real Whop SDK found');
+        window.whop = window.Whop;
+      } else {
+        console.log('Real Whop SDK not found, using mock');
+        window.whop = createMockWhopSDK();
+      }
+    } else {
+      console.log('Non-Whop environment, using mock SDK');
+      window.whop = createMockWhopSDK();
     }
     
-    try {
-      // Create a mock Whop SDK if not available
-      if (!window.whop) {
-        window.whop = {
-          // Mock user data
-          user: {
-            id: 'user_123',
-            username: 'John Trainer',
-            email: 'trainer@example.com',
-            avatar: null
-          },
-          
-          // Mock company data
-          company: {
-            id: 'company_123',
-            name: 'Fitness Company',
-            domain: 'fitness-company.com'
-          },
-          
-          // Mock API methods
-          api: {
-            get: async (endpoint) => {
-              console.log('Whop API GET:', endpoint);
-              return { data: null };
-            },
-            post: async (endpoint, data) => {
-              console.log('Whop API POST:', endpoint, data);
-              return { data: null };
-            }
-          },
-          
-          // Mock events
-          events: {
-            on: (event, callback) => {
-              console.log('Whop event listener:', event);
-            },
-            emit: (event, data) => {
-              console.log('Whop event emit:', event, data);
-            }
-          },
-          
-          // Mock ready state
-          ready: true
-        };
-      }
-      
-      // Set Whop as ready
-      window.Whop = window.whop;
-      
-      // Dispatch ready event
-      window.dispatchEvent(new CustomEvent('whop:ready', {
-        detail: { whop: window.whop }
-      }));
-      
-      console.log('Whop SDK initialized successfully');
-      
-    } catch (error) {
-      console.error('Failed to initialize Whop SDK:', error);
-    }
+    // Dispatch ready event
+    window.dispatchEvent(new CustomEvent('whop:ready'));
+    console.log('Whop SDK ready event dispatched');
   }
   
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWhopSDK);
+    document.addEventListener('DOMContentLoaded', initializeWhop);
   } else {
-    initWhopSDK();
+    initializeWhop();
   }
-  
-  // Also try to initialize immediately
-  initWhopSDK();
   
 })();

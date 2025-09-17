@@ -1,6 +1,6 @@
 import Layout from '@/components/Layout';
 import Dashboard from '@/components/Dashboard';
-import { SimpleWhopIntegration } from '@/components/SimpleWhopIntegration';
+import { WhopApp } from '@/components/WhopApp';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export default function Home() {
@@ -9,11 +9,11 @@ export default function Home() {
 
   return (
     <ThemeProvider>
-      <SimpleWhopIntegration>
+      <WhopApp>
         <Layout>
           <Dashboard trainerId={trainerId} />
         </Layout>
-      </SimpleWhopIntegration>
+      </WhopApp>
     </ThemeProvider>
   );
 }

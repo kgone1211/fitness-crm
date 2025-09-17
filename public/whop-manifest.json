@@ -1,14 +1,13 @@
 {
   "app_id": "app_v9NgvKg9ABqLE1",
-  "name": "FitnessCRM",
+  "name": "Fitness CRM",
   "description": "A comprehensive fitness CRM application for trainers to manage clients, track workouts, and monitor progress.",
   "version": "1.0.0",
   "author": "Zeke Gonzalez",
   "homepage": "https://fitness-crm-vercel.vercel.app",
   "icon": "https://fitness-crm-vercel.vercel.app/favicon.ico",
   "screenshots": [
-    "https://fitness-crm-vercel.vercel.app/screenshot1.png",
-    "https://fitness-crm-vercel.vercel.app/screenshot2.png"
+    "https://fitness-crm-vercel.vercel.app/screenshot1.png"
   ],
   "categories": ["fitness", "crm", "health"],
   "tags": ["fitness", "trainer", "workout", "crm", "health"],
@@ -23,20 +22,16 @@
     "read:companies",
     "write:companies"
   ],
-  "webhooks": [
-    {
-      "url": "https://fitness-crm-vercel.vercel.app/api/webhooks/whop",
-      "events": ["user.created", "user.updated", "user.deleted"]
-    }
-  ],
+  "webhooks": [],
   "redirect_uris": [
-    "https://fitness-crm-vercel.vercel.app/auth/callback",
-    "http://localhost:3000/auth/callback"
+    "https://fitness-crm-vercel.vercel.app",
+    "http://localhost:3000"
   ],
   "scopes": [
     "read:users",
     "write:users",
     "read:companies",
     "write:companies"
-  ]
+  ],
+  "app_url": "https://fitness-crm-vercel.vercel.app"
 }
