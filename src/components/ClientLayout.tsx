@@ -76,7 +76,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+      <div className={`fixed top-32 bottom-0 left-0 z-50 w-64 bg-white border-r border-gray-200 shadow-sm transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col ${       
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
@@ -84,7 +84,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Activity className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Fitness Portal</span>
+            <span className="text-xl font-bold text-gray-900">Fitness CRM</span>
           </div>
           <button
             onClick={() => setIsSidebarOpen(false)}
@@ -108,7 +108,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="mt-6 px-3">
+        <nav className="mt-6 px-3 flex-1">
           <div className="space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
@@ -116,11 +116,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`${
                     isActive(item.href)
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                      ? 'flex items-center px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 border-r-2 border-indigo-600 rounded-lg'
+                      : 'flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors'
+                  } group flex items-center px-3 py-2 text-sm font-medium`}
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
@@ -132,7 +132,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         </nav>
 
         {/* Logout */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
+        <div className="p-3 border-t border-gray-200">
           <button
             onClick={handleLogout}
             className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
@@ -144,28 +144,17 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
-        {/* Top bar */}
-        <div className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-            
-            <div className="flex items-center space-x-4">
-              <div className="hidden sm:block">
-                <p className="text-sm text-gray-500">Welcome back,</p>
-                <p className="text-lg font-medium text-gray-900">{client.name}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="pl-64">
+        {/* Mobile menu button - floating */}
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md text-gray-400 hover:text-gray-600"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
 
         {/* Page content */}
-        <main className="flex-1">
+        <main className="flex-1 min-h-screen">
           {children}
         </main>
       </div>

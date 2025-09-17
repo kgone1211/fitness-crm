@@ -42,8 +42,8 @@ export default function Layout({ children }: LayoutProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-        <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)} />
+        <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white border-r border-gray-200 shadow-sm">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
               type="button"
@@ -58,7 +58,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Activity className="h-5 w-5 text-white" />
               </div>
-              <span className="ml-2 text-xl font-bold text-gray-900">FitnessCRM</span>
+              <span className="ml-2 text-xl font-bold text-gray-900">Fitness CRM</span>
             </div>
             <nav className="mt-5 px-2 space-y-1">
               {navigation.map((item) => {
@@ -69,14 +69,14 @@ export default function Layout({ children }: LayoutProps) {
                     href={item.href}
                     className={`${
                       isActive
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+                        ? 'flex items-center px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 border-r-2 border-indigo-600 rounded-lg'
+                        : 'flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors'
+                    } group flex items-center px-3 py-2 text-sm font-medium`}
                   >
                     <item.icon
                       className={`${
-                        isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                      } mr-4 h-6 w-6`}
+                        isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500'
+                      } mr-3 h-5 w-5`}
                     />
                     {item.name}
                   </Link>
@@ -95,7 +95,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Activity className="h-5 w-5 text-white" />
               </div>
-              <span className="ml-2 text-xl font-bold text-gray-900">FitnessCRM</span>
+              <span className="ml-2 text-xl font-bold text-gray-900">Fitness CRM</span>
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1">
               {navigation.map((item) => {

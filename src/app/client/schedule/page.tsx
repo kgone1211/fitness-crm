@@ -24,7 +24,7 @@ export default function ClientSchedule() {
     const loadWorkouts = async () => {
       try {
         const clientId = '1';
-        const clientWorkouts = await db.getWorkoutSessions('1', clientId);
+        const clientWorkouts = db.getWorkoutSessions('1', clientId);
         setWorkouts(clientWorkouts);
         setLoading(false);
       } catch (error) {
@@ -97,7 +97,7 @@ export default function ClientSchedule() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>

@@ -16,7 +16,8 @@ import {
   Edit3,
   Trash2,
   Save,
-  RotateCcw
+  RotateCcw,
+  X
 } from 'lucide-react';
 import { 
   WorkoutSession, 
@@ -29,6 +30,7 @@ import {
 import { db } from '@/lib/database';
 import PageHeader from '@/components/PageHeader';
 import WorkoutExercise from '@/components/WorkoutExercise';
+import WorkoutTemplateBuilder from '@/components/WorkoutTemplateBuilder';
 
 export default function WorkoutsPage() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'templates' | 'exercises'>('sessions');
@@ -47,6 +49,9 @@ export default function WorkoutsPage() {
   const [showNewSessionForm, setShowNewSessionForm] = useState(false);
   const [showNewTemplateForm, setShowNewTemplateForm] = useState(false);
   const [showNewExerciseForm, setShowNewExerciseForm] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<WorkoutTemplate | null>(null);
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<WorkoutTemplate | null>(null);
   
   // Form data
   const [sessionForm, setSessionForm] = useState({
@@ -69,6 +74,13 @@ export default function WorkoutsPage() {
     instructions: '',
     videoUrl: '',
     imageUrl: ''
+  });
+
+  const [scheduleForm, setScheduleForm] = useState({
+    clientId: '',
+    scheduledDate: '',
+    scheduledTime: '',
+    notes: ''
   });
 
   // Load data
@@ -94,6 +106,94 @@ export default function WorkoutsPage() {
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Template management
+  const handleSaveTemplate = async (template: WorkoutTemplate) => {
+    try {
+      if (editingTemplate) {
+        // Update existing template
+        await db.updateWorkoutTemplate(template.id, template);
+        setWorkoutTemplates(prev => 
+          prev.map(t => t.id === template.id ? template : t)
+        );
+      } else {
+        // Create new template
+        await db.createWorkoutTemplate(template);
+        setWorkoutTemplates(prev => [template, ...prev]);
+      }
+      setEditingTemplate(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save template');
+    }
+  };
+
+  const handleEditTemplate = (template: WorkoutTemplate) => {
+    setEditingTemplate(template);
+  };
+
+  const handleDeleteTemplate = async (templateId: string) => {
+    if (!confirm('Are you sure you want to delete this template?')) return;
+    
+    try {
+      await db.deleteWorkoutTemplate(templateId);
+      setWorkoutTemplates(prev => prev.filter(t => t.id !== templateId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete template');
+    }
+  };
+
+  // Scheduling functions
+  const handleScheduleWorkout = (template: WorkoutTemplate) => {
+    setSelectedTemplate(template);
+    setScheduleForm({
+      clientId: '',
+      scheduledDate: new Date().toISOString().split('T')[0],
+      scheduledTime: '09:00',
+      notes: ''
+    });
+    setShowScheduleForm(true);
+  };
+
+  const scheduleWorkout = async () => {
+    if (!selectedTemplate || !scheduleForm.clientId || !scheduleForm.scheduledDate) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const scheduledDateTime = new Date(`${scheduleForm.scheduledDate}T${scheduleForm.scheduledTime}`);
+      
+      const workoutSession: WorkoutSession = {
+        id: `session_${Date.now()}`,
+        trainerId: '1',
+        clientId: scheduleForm.clientId,
+        name: selectedTemplate.name,
+        description: selectedTemplate.description + (scheduleForm.notes ? `\n\nNotes: ${scheduleForm.notes}` : ''),
+        exercises: selectedTemplate.exercises.map(ex => ({
+          ...ex,
+          id: `scheduled_${ex.id}_${Date.now()}`,
+          sets: ex.sets.map(set => ({
+            ...set,
+            id: `scheduled_${set.id}_${Date.now()}`,
+            completed: false
+          }))
+        })),
+        startTime: scheduledDateTime,
+        endTime: null,
+        status: 'scheduled',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      await db.createWorkoutSession(workoutSession);
+      setWorkoutSessions(prev => [workoutSession, ...prev]);
+      setShowScheduleForm(false);
+      setSelectedTemplate(null);
+      setScheduleForm({ clientId: '', scheduledDate: '', scheduledTime: '', notes: '' });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to schedule workout');
     }
   };
 
@@ -310,7 +410,7 @@ export default function WorkoutsPage() {
             }`}>
               {currentSession.status === 'in_progress' ? 'In Progress' : 'Paused'}
             </div>
-          </div>
+      </div>
 
           {/* Progress Bar */}
           <div className="mb-6">
@@ -395,7 +495,7 @@ export default function WorkoutsPage() {
                   className="px-3 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   View All
-                </button>
+            </button>
               </div>
             </div>
           </div>
@@ -439,13 +539,13 @@ export default function WorkoutsPage() {
                 <Activity className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                 <p className="text-lg font-medium mb-2">No workout sessions yet</p>
                 <p className="text-sm">Start a new workout to begin tracking your progress</p>
-              </div>
+        </div>
             ) : (
               <div className="grid gap-4">
                 {workoutSessions.map((session) => (
                   <div key={session.id} className="bg-white border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex-1">
+                <div className="flex-1">
                         <h4 className="text-lg font-semibold text-gray-900">{session.name}</h4>
                         <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
                           <span>{session.exercises.length} exercises</span>
@@ -458,8 +558,8 @@ export default function WorkoutsPage() {
                                 : 'bg-yellow-100 text-yellow-800'
                           }`}>
                             {session.status}
-                          </span>
-                        </div>
+                    </span>
+                  </div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
@@ -481,15 +581,27 @@ export default function WorkoutsPage() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold text-gray-900">Workout Templates</h3>
-              <button
-                onClick={() => setShowNewTemplateForm(true)}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Template
-              </button>
-            </div>
-            
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setShowNewTemplateForm(true)}
+                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Test Template Builder
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingTemplate(null);
+                    setShowNewTemplateForm(true);
+                  }}
+                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Template
+                </button>
+              </div>
+                  </div>
+                  
             {workoutTemplates.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Target className="h-12 w-12 mx-auto mb-4 text-gray-400" />
@@ -510,10 +622,23 @@ export default function WorkoutsPage() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                        <button 
+                          onClick={() => handleScheduleWorkout(template)}
+                          className="px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          title="Schedule this workout for a client"
+                        >
+                          Schedule
+                        </button>
+                        <button 
+                          onClick={() => handleEditTemplate(template)}
+                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                        >
                           <Edit3 className="h-4 w-4" />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors">
+                        <button 
+                          onClick={() => handleDeleteTemplate(template.id)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
@@ -553,8 +678,8 @@ export default function WorkoutsPage() {
                         <h4 className="text-lg font-semibold text-gray-900">{exercise.name}</h4>
                         <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
                           <span>{exercise.muscleGroups.join(', ')}</span>
-                        </div>
-                      </div>
+                  </div>
+                </div>
                       <div className="flex items-center space-x-2">
                         {currentSession && (
                           <button
@@ -562,19 +687,19 @@ export default function WorkoutsPage() {
                             className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                           >
                             Add to Workout
-                          </button>
-                        )}
+                    </button>
+                  )}
                         <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
                           <Edit3 className="h-4 w-4" />
-                        </button>
+                  </button>
                         <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors">
                           <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  </button>
+                </div>
               </div>
+            </div>
+          ))}
+        </div>
             )}
           </div>
         )}
@@ -637,6 +762,121 @@ export default function WorkoutsPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Template Builder Modal */}
+      {(editingTemplate !== null || showNewTemplateForm) && (
+        <WorkoutTemplateBuilder
+          template={editingTemplate}
+          onSave={handleSaveTemplate}
+          onCancel={() => {
+            setEditingTemplate(null);
+            setShowNewTemplateForm(false);
+          }}
+        />
+      )}
+
+      {/* Schedule Workout Modal */}
+      {showScheduleForm && selectedTemplate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-md">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">Schedule Workout</h3>
+              <button
+                onClick={() => setShowScheduleForm(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-900">{selectedTemplate.name}</h4>
+                <p className="text-sm text-blue-700">{selectedTemplate.description}</p>
+                <div className="flex items-center space-x-4 text-xs text-blue-600 mt-2">
+                  <span>{selectedTemplate.exercises.length} exercises</span>
+                  <span>{selectedTemplate.estimatedDuration} min</span>
+                  <span className="capitalize">{selectedTemplate.difficulty}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                <select
+                  value={scheduleForm.clientId}
+                  onChange={(e) => setScheduleForm(prev => ({ ...prev, clientId: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select a client</option>
+                  {clients.map(client => (
+                    <option key={client.id} value={client.id}>{client.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                  <input
+                    type="date"
+                    value={scheduleForm.scheduledDate}
+                    onChange={(e) => setScheduleForm(prev => ({ ...prev, scheduledDate: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                  <input
+                    type="time"
+                    value={scheduleForm.scheduledTime}
+                    onChange={(e) => setScheduleForm(prev => ({ ...prev, scheduledTime: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+                <textarea
+                  value={scheduleForm.notes}
+                  onChange={(e) => setScheduleForm(prev => ({ ...prev, notes: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
+                  placeholder="Add any special instructions or notes for this workout..."
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 bg-gray-50">
+              <button
+                onClick={() => setShowScheduleForm(false)}
+                className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={scheduleWorkout}
+                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Schedule Workout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Debug Info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed bottom-4 right-4 bg-black text-white p-2 text-xs rounded">
+          <div>Editing Template: {editingTemplate ? 'Yes' : 'No'}</div>
+          <div>Show New Template Form: {showNewTemplateForm ? 'Yes' : 'No'}</div>
+          <div>Templates Count: {workoutTemplates.length}</div>
         </div>
       )}
     </div>

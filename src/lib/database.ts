@@ -237,6 +237,188 @@ export function initializeDatabase() {
       updatedAt: new Date('2024-09-08'),
     },
   ];
+
+  // Sample exercises
+  exercises = [
+    {
+      id: 'ex1',
+      name: 'Push-ups',
+      muscleGroups: ['chest', 'triceps', 'shoulders'],
+      instructions: 'Start in plank position, lower body to ground, push back up',
+      videoUrl: '',
+      imageUrl: ''
+    },
+    {
+      id: 'ex2',
+      name: 'Squats',
+      muscleGroups: ['legs', 'glutes'],
+      instructions: 'Stand with feet shoulder-width apart, lower until thighs parallel to ground',
+      videoUrl: '',
+      imageUrl: ''
+    },
+    {
+      id: 'ex3',
+      name: 'Deadlifts',
+      muscleGroups: ['back', 'legs', 'glutes'],
+      instructions: 'Lift barbell from ground to hip level, keeping back straight',
+      videoUrl: '',
+      imageUrl: ''
+    },
+    {
+      id: 'ex4',
+      name: 'Bench Press',
+      muscleGroups: ['chest', 'triceps', 'shoulders'],
+      instructions: 'Lie on bench, lower bar to chest, press up',
+      videoUrl: '',
+      imageUrl: ''
+    },
+    {
+      id: 'ex5',
+      name: 'Overhead Press',
+      muscleGroups: ['shoulders', 'triceps'],
+      instructions: 'Press weights overhead from shoulder level',
+      videoUrl: '',
+      imageUrl: ''
+    },
+    {
+      id: 'ex6',
+      name: 'Pull-ups',
+      muscleGroups: ['back', 'biceps'],
+      instructions: 'Hang from bar, pull body up until chin over bar',
+      videoUrl: '',
+      imageUrl: ''
+    }
+  ];
+
+  // Sample workout templates
+  workoutTemplates = [
+    {
+      id: 'wt1',
+      createdBy: '1',
+      name: 'Full Body Strength',
+      description: 'A balanced workout for overall strength development',
+      difficulty: 'intermediate',
+      estimatedDuration: 60,
+      exercises: [
+        {
+          id: 'wte1_ex1',
+          exerciseId: 'ex1',
+          exercise: exercises.find(e => e.id === 'ex1')!,
+          sets: [
+            { id: 'wte1_ex1_s1', setNumber: 1, reps: 10, weight: 0, completed: false, restTime: 60, notes: '' },
+            { id: 'wte1_ex1_s2', setNumber: 2, reps: 10, weight: 0, completed: false, restTime: 60, notes: '' },
+            { id: 'wte1_ex1_s3', setNumber: 3, reps: 10, weight: 0, completed: false, restTime: 60, notes: '' },
+          ],
+          order: 1,
+          notes: 'Focus on proper form'
+        },
+        {
+          id: 'wte1_ex2',
+          exerciseId: 'ex2',
+          exercise: exercises.find(e => e.id === 'ex2')!,
+          sets: [
+            { id: 'wte1_ex2_s1', setNumber: 1, reps: 12, weight: 0, completed: false, restTime: 90, notes: '' },
+            { id: 'wte1_ex2_s2', setNumber: 2, reps: 10, weight: 0, completed: false, restTime: 90, notes: '' },
+            { id: 'wte1_ex2_s3', setNumber: 3, reps: 8, weight: 0, completed: false, restTime: 90, notes: '' },
+          ],
+          order: 2,
+          notes: 'Keep knees behind toes'
+        },
+        {
+          id: 'wte1_ex3',
+          exerciseId: 'ex3',
+          exercise: exercises.find(e => e.id === 'ex3')!,
+          sets: [
+            { id: 'wte1_ex3_s1', setNumber: 1, reps: 8, weight: 135, completed: false, restTime: 120, notes: '' },
+            { id: 'wte1_ex3_s2', setNumber: 2, reps: 6, weight: 155, completed: false, restTime: 120, notes: '' },
+            { id: 'wte1_ex3_s3', setNumber: 3, reps: 4, weight: 175, completed: false, restTime: 120, notes: '' },
+          ],
+          order: 3,
+          notes: 'Heavy compound movement - focus on form'
+        }
+      ],
+      createdAt: new Date('2024-08-01'),
+      updatedAt: new Date('2024-08-01'),
+    },
+    {
+      id: 'wt2',
+      createdBy: '1',
+      name: 'Upper Body Blast',
+      description: 'Intense upper body workout focusing on chest, shoulders, and arms',
+      difficulty: 'advanced',
+      estimatedDuration: 75,
+      exercises: [
+        {
+          id: 'wte2_ex1',
+          exerciseId: 'ex4',
+          exercise: exercises.find(e => e.id === 'ex4')!,
+          sets: [
+            { id: 'wte2_ex1_s1', setNumber: 1, reps: 12, weight: 135, completed: false, restTime: 60, notes: '' },
+            { id: 'wte2_ex1_s2', setNumber: 2, reps: 10, weight: 145, completed: false, restTime: 60, notes: '' },
+            { id: 'wte2_ex1_s3', setNumber: 3, reps: 8, weight: 155, completed: false, restTime: 60, notes: '' },
+            { id: 'wte2_ex1_s4', setNumber: 4, reps: 6, weight: 165, completed: false, restTime: 60, notes: '' },
+          ],
+          order: 1,
+          notes: 'Warm up with lighter weight'
+        },
+        {
+          id: 'wte2_ex2',
+          exerciseId: 'ex5',
+          exercise: exercises.find(e => e.id === 'ex5')!,
+          sets: [
+            { id: 'wte2_ex2_s1', setNumber: 1, reps: 10, weight: 75, completed: false, restTime: 90, notes: '' },
+            { id: 'wte2_ex2_s2', setNumber: 2, reps: 8, weight: 85, completed: false, restTime: 90, notes: '' },
+            { id: 'wte2_ex2_s3', setNumber: 3, reps: 6, weight: 95, completed: false, restTime: 90, notes: '' },
+          ],
+          order: 2,
+          notes: 'Focus on shoulder stability'
+        },
+        {
+          id: 'wte2_ex3',
+          exerciseId: 'ex6',
+          exercise: exercises.find(e => e.id === 'ex6')!,
+          sets: [
+            { id: 'wte2_ex3_s1', setNumber: 1, reps: 8, weight: 0, completed: false, restTime: 90, notes: '' },
+            { id: 'wte2_ex3_s2', setNumber: 2, reps: 6, weight: 0, completed: false, restTime: 90, notes: '' },
+            { id: 'wte2_ex3_s3', setNumber: 3, reps: 4, weight: 0, completed: false, restTime: 90, notes: '' },
+          ],
+          order: 3,
+          notes: 'Use assistance if needed'
+        }
+      ],
+      createdAt: new Date('2024-08-15'),
+      updatedAt: new Date('2024-08-15'),
+    }
+  ];
+
+  // Sample workout sessions
+  workoutSessions = [
+    {
+      id: 'ws1',
+      trainerId: '1',
+      clientId: '1',
+      name: 'Morning Strength Session',
+      description: 'Full body strength workout',
+      startTime: new Date('2024-09-17T08:00:00'),
+      endTime: null,
+      status: 'scheduled',
+      exercises: [
+        {
+          id: 'ws1_ex1',
+          exerciseId: 'ex1',
+          exercise: exercises.find(e => e.id === 'ex1')!,
+          sets: [
+            { id: 'ws1_ex1_s1', setNumber: 1, reps: 10, weight: 0, completed: false, restTime: 60, notes: '' },
+            { id: 'ws1_ex1_s2', setNumber: 2, reps: 10, weight: 0, completed: false, restTime: 60, notes: '' },
+          ],
+          order: 1,
+          notes: ''
+        }
+      ],
+      createdAt: new Date('2024-09-16'),
+      updatedAt: new Date('2024-09-16'),
+    }
+  ];
 }
 
 // Database operations
@@ -697,6 +879,53 @@ export const db = {
     }
     
     return progress;
+  },
+
+  // Synchronous workout functions for client-side use
+  getWorkoutSessions: (trainerId: string) => {
+    return workoutSessions.filter(s => s.trainerId === trainerId);
+  },
+
+  getWorkoutTemplates: (trainerId: string) => {
+    return workoutTemplates.filter(t => t.createdBy === trainerId);
+  },
+
+  getExercises: () => {
+    return exercises;
+  },
+
+  getClients: () => {
+    return clients;
+  },
+
+  // Client portal functions
+  getMeasurements: (clientId: string) => {
+    return measurements.filter(m => m.clientId === clientId);
+  },
+
+  getWorkoutSessions: (trainerId: string, clientId?: string) => {
+    if (clientId) {
+      return workoutSessions.filter(s => s.clientId === clientId);
+    }
+    return workoutSessions.filter(s => s.trainerId === trainerId);
+  },
+
+  getMacroData: async (clientId: string, date?: string) => {
+    const targetDate = date ? new Date(date) : new Date();
+    const target = macroTargets.find(t => t.clientId === clientId);
+    const logs = macroLogs.filter(l => 
+      l.clientId === clientId && 
+      l.date.toDateString() === targetDate.toDateString()
+    );
+
+    return {
+      targets: target || null,
+      logs: logs.sort((a, b) => b.date.getTime() - a.date.getTime()),
+      totalCalories: logs.reduce((sum, log) => sum + log.calories, 0),
+      totalProtein: logs.reduce((sum, log) => sum + log.protein, 0),
+      totalCarbs: logs.reduce((sum, log) => sum + log.carbs, 0),
+      totalFats: logs.reduce((sum, log) => sum + log.fat, 0),
+    };
   },
 };
 

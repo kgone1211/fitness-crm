@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
+    "export": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@whop-sdk/cli": "^0.0.9",
     "@whop/api": "^0.0.50",
     "@whop/react": "^0.2.45",
     "class-variance-authority": "^0.7.1",

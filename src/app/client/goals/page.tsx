@@ -28,7 +28,7 @@ export default function ClientGoals() {
     const loadClientData = async () => {
       try {
         const clientId = '1';
-        const clients = await db.getClients();
+        const clients = db.getClients();
         const clientData = clients.find(c => c.id === clientId);
         setClient(clientData || null);
         
@@ -94,7 +94,7 @@ export default function ClientGoals() {
     Math.min(100, Math.max(0, ((currentWeight - targetWeight) / Math.abs(currentWeight - targetWeight)) * 50 + 50)) : 0;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>

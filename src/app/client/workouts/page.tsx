@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { db } from '@/lib/database';
 import { WorkoutSession, WorkoutExercise } from '@/types';
+import ClientWorkoutSession from '@/components/ClientWorkoutSession';
 
 export default function ClientWorkouts() {
   const [workouts, setWorkouts] = useState<WorkoutSession[]>([]);
@@ -25,7 +26,7 @@ export default function ClientWorkouts() {
     const loadWorkouts = async () => {
       try {
         const clientId = '1';
-        const clientWorkouts = await db.getWorkoutSessions('1', clientId);
+        const clientWorkouts = db.getWorkoutSessions('1', clientId);
         setWorkouts(clientWorkouts);
         setLoading(false);
       } catch (error) {
@@ -56,15 +57,21 @@ export default function ClientWorkouts() {
 
   const completeWorkout = () => {
     if (activeWorkout) {
+      const updatedWorkout = { ...activeWorkout, status: 'completed' as const, endTime: new Date() };
       setWorkouts(prev => 
         prev.map(w => 
-          w.id === activeWorkout.id 
-            ? { ...w, status: 'completed', endTime: new Date() }
-            : w
+          w.id === activeWorkout.id ? updatedWorkout : w
         )
       );
       setActiveWorkout(null);
     }
+  };
+
+  const updateWorkout = (updatedWorkout: WorkoutSession) => {
+    setActiveWorkout(updatedWorkout);
+    setWorkouts(prev => 
+      prev.map(w => w.id === updatedWorkout.id ? updatedWorkout : w)
+    );
   };
 
   const pauseWorkout = () => {
@@ -88,7 +95,7 @@ export default function ClientWorkouts() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
@@ -111,52 +118,13 @@ export default function ClientWorkouts() {
 
       {/* Active Workout */}
       {activeWorkout && (
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold mb-2">{activeWorkout.name}</h2>
-              <p className="text-blue-100">{activeWorkout.description}</p>
-              <div className="flex items-center space-x-4 mt-2">
-                <div className="flex items-center space-x-1">
-                  <Activity className="h-4 w-4" />
-                  <span className="text-sm">{activeWorkout.exercises.length} exercises</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm">Started {new Date(activeWorkout.startTime).toLocaleTimeString()}</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-2">
-              {activeWorkout.status === 'in_progress' ? (
-                <>
-                  <button
-                    onClick={pauseWorkout}
-                    className="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors flex items-center space-x-2"
-                  >
-                    <Pause className="h-4 w-4" />
-                    <span>Pause</span>
-                  </button>
-                  <button
-                    onClick={completeWorkout}
-                    className="px-4 py-2 bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    <span>Complete</span>
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={resumeWorkout}
-                  className="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors flex items-center space-x-2"
-                >
-                  <Play className="h-4 w-4" />
-                  <span>Resume</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+        <ClientWorkoutSession
+          session={activeWorkout}
+          onUpdate={updateWorkout}
+          onComplete={completeWorkout}
+          onPause={pauseWorkout}
+          onResume={resumeWorkout}
+        />
       )}
 
       {/* Workouts Grid */}

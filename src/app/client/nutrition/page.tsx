@@ -27,7 +27,7 @@ export default function ClientNutrition() {
     const loadNutritionData = async () => {
       try {
         const clientId = '1';
-        const macroData = await db.getMacroData(clientId);
+        const macroData = db.getMacroData(clientId);
         setMacroTargets(macroData.targets);
         setMacroLogs(macroData.logs);
         setLoading(false);
@@ -139,7 +139,7 @@ export default function ClientNutrition() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>

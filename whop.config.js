@@ -1,6 +1,7 @@
 /** @type {import('@whop-apps/sdk').WhopConfig} */
 module.exports = {
   // Your app's configuration
+  appId: "app_6ZskuhNqu7LD9V",
   name: "Fitness CRM",
   description: "A comprehensive fitness client management system",
   version: "1.0.0",
@@ -24,7 +25,7 @@ module.exports = {
   // Development settings
   development: {
     // Local development URL
-    localUrl: "http://localhost:3001",
+    localUrl: "http://localhost:3000",
     
     // Enable hot reload
     hotReload: true

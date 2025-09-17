@@ -102,9 +102,9 @@ export default function Dashboard({ trainerId }: DashboardProps) {
             <Plus className="h-5 w-5 mr-2" />
             Add Client
           </Link>
-          <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+          <Link href="/workouts" className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
             Schedule Workout
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -321,13 +321,13 @@ export default function Dashboard({ trainerId }: DashboardProps) {
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
         <h3 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <Link href="/workouts" className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             <Calendar className="h-8 w-8 text-blue-600 mr-3" />
             <div className="text-left">
               <div className="font-medium text-gray-900">Schedule Workout</div>
               <div className="text-sm text-gray-600">Book a new session</div>
             </div>
-          </button>
+          </Link>
           <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             <Target className="h-8 w-8 text-green-600 mr-3" />
             <div className="text-left">

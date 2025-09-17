@@ -26,14 +26,14 @@ export default function ClientProgress() {
       try {
         const clientId = '1';
         
-        const clients = await db.getClients();
+        const clients = db.getClients();
         const clientData = clients.find(c => c.id === clientId);
         setClient(clientData || null);
 
-        const clientMeasurements = await db.getMeasurements(clientId);
+        const clientMeasurements = db.getMeasurements(clientId);
         setMeasurements(clientMeasurements);
 
-        const clientWorkouts = await db.getWorkoutSessions('1', clientId);
+        const clientWorkouts = db.getWorkoutSessions('1', clientId);
         setWorkouts(clientWorkouts);
 
         setLoading(false);
@@ -104,7 +104,7 @@ export default function ClientProgress() {
   ).length;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
