@@ -24,12 +24,14 @@ import { Client } from '@/types';
 import MacroTracking from '@/components/MacroTracking';
 import PageHeader from '@/components/PageHeader';
 import ClientDetailsModal from '@/components/ClientDetailsModal';
+import EditClientModal from '@/components/EditClientModal';
 
 export default function ClientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedClientForDetails, setSelectedClientForDetails] = useState<Client | null>(null);
+  const [selectedClientForEdit, setSelectedClientForEdit] = useState<Client | null>(null);
   
   const clients = db.getClients();
   const measurements = db.getMeasurements();
@@ -62,6 +64,13 @@ export default function ClientsPage() {
       lastCheckIn: lastCheckIn?.date,
       totalMeasurements: clientMeasurements.length,
     };
+  };
+
+  const handleSaveClient = (updatedClient: Client) => {
+    // In a real app, this would update the database
+    // For now, we'll just close the modal
+    console.log('Updated client:', updatedClient);
+    setSelectedClientForEdit(null);
   };
 
   return (
@@ -246,7 +255,10 @@ export default function ClientsPage() {
                   >
                     View Details
                   </button>
-                  <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button 
+                    onClick={() => setSelectedClientForEdit(client)}
+                    className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
                     Edit
                   </button>
                 </div>
@@ -286,6 +298,13 @@ export default function ClientsPage() {
         onClose={() => setSelectedClientForDetails(null)}
         measurements={measurements}
         checkIns={checkIns}
+      />
+
+      {/* Edit Client Modal */}
+      <EditClientModal
+        client={selectedClientForEdit}
+        onClose={() => setSelectedClientForEdit(null)}
+        onSave={handleSaveClient}
       />
     </div>
   );
