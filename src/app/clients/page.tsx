@@ -23,11 +23,13 @@ import { db } from '@/lib/database';
 import { Client } from '@/types';
 import MacroTracking from '@/components/MacroTracking';
 import PageHeader from '@/components/PageHeader';
+import ClientDetailsModal from '@/components/ClientDetailsModal';
 
 export default function ClientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedClientForDetails, setSelectedClientForDetails] = useState<Client | null>(null);
   
   const clients = db.getClients();
   const measurements = db.getMeasurements();
@@ -238,7 +240,10 @@ export default function ClientsPage() {
                   >
                     Macro Tracking
                   </button>
-                  <button className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button 
+                    onClick={() => setSelectedClientForDetails(client)}
+                    className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
                     View Details
                   </button>
                   <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
@@ -274,6 +279,14 @@ export default function ClientsPage() {
           )}
         </div>
       )}
+
+      {/* Client Details Modal */}
+      <ClientDetailsModal
+        client={selectedClientForDetails}
+        onClose={() => setSelectedClientForDetails(null)}
+        measurements={measurements}
+        checkIns={checkIns}
+      />
     </div>
   );
 }
