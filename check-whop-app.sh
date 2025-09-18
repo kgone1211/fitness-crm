@@ -36,3 +36,4 @@ echo "- Check if app ID is correct"
 echo "- Verify app is published (not draft)"
 echo "- Try creating a new app if needed"
 echo "- Check Whop support if issues persist"
+ 

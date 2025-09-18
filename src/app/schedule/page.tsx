@@ -12,7 +12,8 @@ import {
   CheckCircle,
   X,
   Edit,
-  Trash2
+  Trash2,
+  ArrowLeft
 } from 'lucide-react';
 
 interface Appointment {
@@ -31,6 +32,10 @@ interface Appointment {
 export default function SchedulePage() {
   const [showNewAppointment, setShowNewAppointment] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const handleBackClick = () => {
+    window.history.back();
+  };
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: '1',
@@ -130,8 +135,19 @@ export default function SchedulePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Schedule</h1>
-          <p className="text-lg text-gray-600">Manage your appointments and availability.</p>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={handleBackClick}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="text-sm font-medium">Back</span>
+            </button>
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Schedule</h1>
+              <p className="text-lg text-gray-600">Manage your appointments and availability.</p>
+            </div>
+          </div>
         </div>
         <button
           onClick={() => setShowNewAppointment(true)}
