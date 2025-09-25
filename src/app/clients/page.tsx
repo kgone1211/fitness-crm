@@ -316,7 +316,6 @@ export default function ClientsPage() {
                   Edit
                 </button>
               </div>
-              </div>
             </div>
           );
         })}
