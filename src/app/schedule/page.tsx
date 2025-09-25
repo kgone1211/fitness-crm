@@ -141,8 +141,7 @@ export default function SchedulePage() {
   const filteredAppointments = appointments.filter(apt => apt.date === selectedDate);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="space-y-8">
+    <div className="space-y-8">
         {/* Header */}
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
@@ -456,7 +455,6 @@ export default function SchedulePage() {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 }

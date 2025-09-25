@@ -4,10 +4,10 @@
   "description": "A comprehensive fitness client management system for trainers to manage clients, track workouts, and monitor progress.",
   "version": "1.0.0",
   "author": "Zeke Gonzalez",
-  "homepage": "https://fitness-crm-vercel.vercel.app",
-  "icon": "https://fitness-crm-vercel.vercel.app/favicon.ico",
+  "homepage": "https://client-tracking-lovat.vercel.app",
+  "icon": "https://client-tracking-lovat.vercel.app/favicon.ico",
   "screenshots": [
-    "https://fitness-crm-vercel.vercel.app/screenshot1.png"
+    "https://client-tracking-lovat.vercel.app/screenshot1.png"
   ],
   "categories": ["fitness", "crm", "health"],
   "tags": ["fitness", "trainer", "workout", "crm", "health"],
@@ -24,8 +24,8 @@
   ],
   "webhooks": [],
   "redirect_uris": [
-    "https://fitness-crm-vercel.vercel.app",
-    "https://fitness-crm-vercel.vercel.app/whop",
+    "https://client-tracking-lovat.vercel.app",
+    "https://client-tracking-lovat.vercel.app/whop",
     "http://localhost:3000",
     "http://localhost:3010"
   ],
@@ -35,6 +35,6 @@
     "read:companies",
     "write:companies"
   ],
-  "app_url": "https://fitness-crm-vercel.vercel.app/whop",
-  "iframe_url": "https://fitness-crm-vercel.vercel.app/whop"
+  "app_url": "https://client-tracking-lovat.vercel.app/whop",
+  "iframe_url": "https://client-tracking-lovat.vercel.app/whop"
 }

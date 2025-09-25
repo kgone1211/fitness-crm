@@ -116,8 +116,7 @@ export default function SettingsPage() {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="space-y-8">
+      <div className="space-y-8">
           {/* Header */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
@@ -182,7 +181,6 @@ export default function SettingsPage() {
           <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-8">
             {renderTabContent()}
           </div>
-        </div>
       </div>
     </ThemeProvider>
   );

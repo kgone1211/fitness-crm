@@ -1,81 +1,88 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateWhopUser } from '@/lib/whop';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('user_id');
-    const companyId = searchParams.get('company_id');
+    const { userId } = await request.json();
 
-    if (!userId || !companyId) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'Missing required parameters' },
+        { error: 'User ID is required' },
         { status: 400 }
       );
     }
 
-    // Validate with Whop API
-    const whopApiKey = process.env.WHOP_API_KEY;
-    if (!whopApiKey) {
+    // Validate user with Whop
+    const whopUser = await validateWhopUser(userId);
+    
+    if (!whopUser) {
       return NextResponse.json(
-        { error: 'Whop API key not configured' },
-        { status: 500 }
+        { error: 'Invalid user or no active subscription' },
+        { status: 401 }
       );
     }
 
-    // For now, return success (you can add actual Whop API validation here)
+    // Return user data
     return NextResponse.json({
       success: true,
       user: {
-        id: userId,
-        company_id: companyId,
-        authenticated: true
+        id: whopUser.id,
+        email: whopUser.email,
+        company_id: whopUser.company_id,
+        subscription_status: whopUser.subscription_status
       }
     });
 
   } catch (error) {
     console.error('Whop auth error:', error);
     return NextResponse.json(
-      { error: 'Authentication failed' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const userId = searchParams.get('userId');
+
+  console.log('Whop auth request for user:', userId);
+
+  if (!userId) {
+    console.log('No user ID provided');
+    return NextResponse.json(
+      { error: 'User ID is required' },
+      { status: 400 }
+    );
+  }
+
   try {
-    const body = await request.json();
-    const { user_id, company_id } = body;
-
-    if (!user_id || !company_id) {
+    console.log('Validating Whop user:', userId);
+    const whopUser = await validateWhopUser(userId);
+    
+    if (!whopUser) {
+      console.log('Whop user validation failed for:', userId);
       return NextResponse.json(
-        { error: 'Missing required parameters' },
-        { status: 400 }
+        { error: 'Invalid user or no active subscription' },
+        { status: 401 }
       );
     }
 
-    // Validate with Whop API
-    const whopApiKey = process.env.WHOP_API_KEY;
-    if (!whopApiKey) {
-      return NextResponse.json(
-        { error: 'Whop API key not configured' },
-        { status: 500 }
-      );
-    }
-
-    // For now, return success (you can add actual Whop API validation here)
+    console.log('Whop user validated successfully:', whopUser.email);
     return NextResponse.json({
       success: true,
       user: {
-        id: user_id,
-        company_id: company_id,
-        authenticated: true
+        id: whopUser.id,
+        email: whopUser.email,
+        company_id: whopUser.company_id,
+        subscription_status: whopUser.subscription_status
       }
     });
 
   } catch (error) {
     console.error('Whop auth error:', error);
     return NextResponse.json(
-      { error: 'Authentication failed' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

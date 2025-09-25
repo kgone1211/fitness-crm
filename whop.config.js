@@ -34,6 +34,6 @@ module.exports = {
   // Production settings
   production: {
     // Your production URL
-    url: "https://fitness-crm-vercel.vercel.app"
+    url: "https://client-tracking-lovat.vercel.app"
   }
 };
