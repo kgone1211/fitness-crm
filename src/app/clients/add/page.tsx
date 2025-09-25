@@ -14,23 +14,26 @@ import {
   Phone,
   Ruler,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Users,
+  Heart,
+  Activity,
+  Zap
 } from 'lucide-react';
 import { ClientFormData } from '@/types';
 import { db } from '@/lib/database';
-import PageHeader from '@/components/PageHeader';
 
 const GOAL_OPTIONS = [
-  'weight_loss',
-  'weight_gain', 
-  'muscle_gain',
-  'endurance',
-  'strength',
-  'flexibility',
-  'general_fitness',
-  'athletic_performance',
-  'rehabilitation',
-  'maintenance'
+  { value: 'weight_loss', label: 'Weight Loss', icon: Weight, color: 'from-red-500 to-pink-500' },
+  { value: 'weight_gain', label: 'Weight Gain', icon: Weight, color: 'from-green-500 to-emerald-500' },
+  { value: 'muscle_gain', label: 'Muscle Gain', icon: Activity, color: 'from-blue-500 to-indigo-500' },
+  { value: 'endurance', label: 'Endurance', icon: Heart, color: 'from-purple-500 to-violet-500' },
+  { value: 'strength', label: 'Strength', icon: Zap, color: 'from-orange-500 to-red-500' },
+  { value: 'flexibility', label: 'Flexibility', icon: Activity, color: 'from-teal-500 to-cyan-500' },
+  { value: 'general_fitness', label: 'General Fitness', icon: Target, color: 'from-indigo-500 to-purple-500' },
+  { value: 'athletic_performance', label: 'Athletic Performance', icon: Activity, color: 'from-yellow-500 to-orange-500' },
+  { value: 'rehabilitation', label: 'Rehabilitation', icon: Heart, color: 'from-pink-500 to-rose-500' },
+  { value: 'maintenance', label: 'Maintenance', icon: CheckCircle, color: 'from-gray-500 to-slate-500' }
 ];
 
 const GENDER_OPTIONS = [
@@ -251,42 +254,91 @@ export default function AddClientPage() {
           min={min}
           max={max}
           step={step}
-          className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-            errors[field] ? 'border-red-300 bg-red-50' : 'border-gray-300'
+          className={`w-full pl-10 pr-3 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+            errors[field] ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white/80 backdrop-blur-sm hover:border-gray-400'
           }`}
         />
       </div>
       {errors[field] && (
-        <p className="text-sm text-red-600 flex items-center">
-          <AlertCircle className="h-4 w-4 mr-1" />
-          {errors[field]}
-        </p>
+        <div className="flex items-center space-x-2 text-sm text-red-600">
+          <AlertCircle className="h-4 w-4" />
+          <span>{errors[field]}</span>
+        </div>
       )}
     </div>
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <PageHeader
-        title="Add New Client"
-        description="Create a new client profile with their information and goals"
-        breadcrumbs={[
-          { name: 'Clients', href: '/clients' },
-          { name: 'Add Client' }
-        ]}
-        showBackButton={true}
-        backHref="/clients"
-      />
-
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Personal Information */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <User className="h-6 w-6 text-blue-600" />
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-6 sm:space-y-0">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => router.back()}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors p-2 hover:bg-white/50 rounded-xl"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                  <span className="text-sm font-medium">Back</span>
+                </button>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-lg">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                    Add New Client
+                  </h1>
+                  <p className="text-lg text-gray-600 font-medium">Create a comprehensive client profile</p>
+                </div>
+              </div>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-white/60 hover:border-blue-300 transition-all duration-300 font-medium backdrop-blur-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="client-form"
+                disabled={isSubmitting}
+                className="group flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    <span>Adding Client...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
+                    <span>Add Client</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="client-form" onSubmit={handleSubmit} className="space-y-8">
+        {/* Personal Information */}
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-8">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+              <User className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
+              <p className="text-gray-600">Basic client details and contact information</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -334,8 +386,8 @@ export default function AddClientPage() {
                 <select
                   value={formData.gender || ''}
                   onChange={(e) => handleInputChange('gender', e.target.value)}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.gender ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  className={`w-full pl-10 pr-3 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                    errors.gender ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white/80 backdrop-blur-sm hover:border-gray-400'
                   }`}
                 >
                   <option value="">Select gender</option>
@@ -347,27 +399,30 @@ export default function AddClientPage() {
                 </select>
               </div>
               {errors.gender && (
-                <p className="text-sm text-red-600 flex items-center">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.gender}
-                </p>
+                <div className="flex items-center space-x-2 text-sm text-red-600">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>{errors.gender}</span>
+                </div>
               )}
             </div>
           </div>
         </div>
 
         {/* Physical Information */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Weight className="h-6 w-6 text-green-600" />
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-8">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
+              <Weight className="h-6 w-6 text-white" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900">Physical Information</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Physical Information</h2>
+              <p className="text-gray-600">Height, weight, and body measurements</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
-              label="Height"
+              label="Height (cm)"
               field="height"
               type="number"
               placeholder="175"
@@ -379,7 +434,7 @@ export default function AddClientPage() {
             />
 
             <InputField
-              label="Starting Weight"
+              label="Starting Weight (lbs)"
               field="startingWeight"
               type="number"
               placeholder="150"
@@ -391,18 +446,23 @@ export default function AddClientPage() {
             />
           </div>
 
-          <div className="mt-4 text-sm text-gray-600">
-            <p>Height in centimeters (cm) • Weight in pounds (lbs)</p>
+          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+            <p className="text-sm text-gray-600">
+              <strong>Note:</strong> Height in centimeters (cm) • Weight in pounds (lbs)
+            </p>
           </div>
         </div>
 
         {/* Address Information */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <MapPin className="h-6 w-6 text-purple-600" />
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-8">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="p-3 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl shadow-lg">
+              <MapPin className="h-6 w-6 text-white" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900">Address Information</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Address Information</h2>
+              <p className="text-gray-600">Client's location and contact details</p>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -450,7 +510,7 @@ export default function AddClientPage() {
                   <select
                     value={formData.address?.country || 'United States'}
                     onChange={(e) => handleInputChange('address.country', e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm hover:border-gray-400"
                   >
                     <option value="United States">United States</option>
                     <option value="Canada">Canada</option>
@@ -465,57 +525,82 @@ export default function AddClientPage() {
         </div>
 
         {/* Goals */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Target className="h-6 w-6 text-orange-600" />
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-8">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg">
+              <Target className="h-6 w-6 text-white" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900">Fitness Goals</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Fitness Goals</h2>
+              <p className="text-gray-600">Select the client's primary fitness objectives</p>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {GOAL_OPTIONS.map((goal) => (
-                <button
-                  key={goal}
-                  type="button"
-                  onClick={() => handleGoalToggle(goal)}
-                  className={`p-3 text-left border rounded-lg transition-colors ${
-                    formData.goals.includes(goal)
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    {formData.goals.includes(goal) ? (
-                      <CheckCircle className="h-4 w-4 text-blue-500" />
-                    ) : (
-                      <div className="h-4 w-4 border border-gray-300 rounded" />
-                    )}
-                    <span className="text-sm font-medium capitalize">
-                      {goal.replace('_', ' ')}
-                    </span>
-                  </div>
-                </button>
-              ))}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {GOAL_OPTIONS.map((goal) => {
+                const Icon = goal.icon;
+                const isSelected = formData.goals.includes(goal.value);
+                return (
+                  <button
+                    key={goal.value}
+                    type="button"
+                    onClick={() => handleGoalToggle(goal.value)}
+                    className={`group relative p-4 text-left border rounded-xl transition-all duration-200 ${
+                      isSelected
+                        ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 shadow-lg'
+                        : 'border-gray-300 bg-white/60 backdrop-blur-sm hover:border-gray-400 hover:bg-white/80 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-lg ${
+                        isSelected 
+                          ? `bg-gradient-to-r ${goal.color} shadow-lg` 
+                          : 'bg-gray-100 group-hover:bg-gray-200'
+                      }`}>
+                        <Icon className={`h-5 w-5 ${
+                          isSelected ? 'text-white' : 'text-gray-600'
+                        }`} />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          {isSelected ? (
+                            <CheckCircle className="h-4 w-4 text-blue-500" />
+                          ) : (
+                            <div className="h-4 w-4 border border-gray-300 rounded" />
+                          )}
+                          <span className={`text-sm font-medium ${
+                            isSelected ? 'text-blue-700' : 'text-gray-700'
+                          }`}>
+                            {goal.label}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {errors.goals && (
-              <p className="text-sm text-red-600 flex items-center">
-                <AlertCircle className="h-4 w-4 mr-1" />
-                {errors.goals}
-              </p>
+              <div className="flex items-center space-x-2 text-sm text-red-600">
+                <AlertCircle className="h-4 w-4" />
+                <span>{errors.goals}</span>
+              </div>
             )}
           </div>
         </div>
 
         {/* Additional Notes */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <User className="h-6 w-6 text-gray-600" />
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-8">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="p-3 bg-gradient-to-br from-gray-500 to-slate-500 rounded-xl shadow-lg">
+              <User className="h-6 w-6 text-white" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900">Additional Information</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Additional Information</h2>
+              <p className="text-gray-600">Any additional notes or special considerations</p>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -525,39 +610,11 @@ export default function AddClientPage() {
             <textarea
               value={formData.notes || ''}
               onChange={(e) => handleInputChange('notes', e.target.value)}
-              placeholder="Any additional notes about the client..."
+              placeholder="Any additional notes about the client, medical conditions, preferences, or special considerations..."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm hover:border-gray-400"
             />
           </div>
-        </div>
-
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
-          >
-            {isSubmitting ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Adding Client...</span>
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" />
-                <span>Add Client</span>
-              </>
-            )}
-          </button>
         </div>
       </form>
     </div>

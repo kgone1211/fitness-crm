@@ -3,9 +3,10 @@ import { validateWhopUser } from '@/lib/whop';
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await request.json();
+    const { userId, user_id } = await request.json();
+    const userIdToUse = userId || user_id;
 
-    if (!userId) {
+    if (!userIdToUse) {
       return NextResponse.json(
         { error: 'User ID is required' },
         { status: 400 }
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate user with Whop
-    const whopUser = await validateWhopUser(userId);
+    const whopUser = await validateWhopUser(userIdToUse);
     
     if (!whopUser) {
       return NextResponse.json(
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const userId = searchParams.get('userId');
+  const userId = searchParams.get('userId') || searchParams.get('user_id');
 
   console.log('Whop auth request for user:', userId);
 
