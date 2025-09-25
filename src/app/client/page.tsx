@@ -232,13 +232,16 @@ export default function ClientDashboard() {
   };
 
   return (
-    <>
-      {/* Full-width banner that aligns with sidebar - positioned absolutely */}
-      <div className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="px-6 py-8">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2">Welcome back, {client.name}!</h1>
-            <p className="text-blue-100 text-lg">
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-xl">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight mb-4">
+              Welcome back, {client.name}!
+            </h1>
+            <p className="text-lg text-gray-600 font-medium">
               Here's your fitness progress and upcoming activities.
             </p>
           </div>
@@ -246,8 +249,7 @@ export default function ClientDashboard() {
       </div>
 
       {/* Main content */}
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div>
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Current Weight */}
@@ -706,6 +708,6 @@ export default function ClientDashboard() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

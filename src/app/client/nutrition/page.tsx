@@ -26,8 +26,16 @@ export default function ClientNutrition() {
   useEffect(() => {
     const loadNutritionData = async () => {
       try {
-        const clientId = '1';
-        const macroData = db.getMacroData(clientId);
+        // Get client data from localStorage (set during login)
+        const clientData = localStorage.getItem('client-data');
+        if (!clientData) {
+          // No client data, redirect to login
+          window.location.href = '/client/login';
+          return;
+        }
+
+        const parsedClient = JSON.parse(clientData);
+        const macroData = db.getMacroData(parsedClient.id);
         setMacroTargets(macroData.targets);
         setMacroLogs(macroData.logs);
         setLoading(false);

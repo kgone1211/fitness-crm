@@ -24,16 +24,22 @@ export default function ClientProgress() {
   useEffect(() => {
     const loadClientData = async () => {
       try {
-        const clientId = '1';
-        
-        const clients = db.getClients();
-        const clientData = clients.find(c => c.id === clientId);
-        setClient(clientData || null);
+        // Get client data from localStorage (set during login)
+        const clientData = localStorage.getItem('client-data');
+        if (!clientData) {
+          // No client data, redirect to login
+          window.location.href = '/client/login';
+          return;
+        }
 
-        const clientMeasurements = db.getMeasurements(clientId);
+        const parsedClient = JSON.parse(clientData);
+        setClient(parsedClient);
+
+        // Get measurements and workouts for this client
+        const clientMeasurements = db.getMeasurements(parsedClient.id);
         setMeasurements(clientMeasurements);
 
-        const clientWorkouts = db.getWorkoutSessions('1', clientId);
+        const clientWorkouts = db.getWorkoutSessions('1', parsedClient.id);
         setWorkouts(clientWorkouts);
 
         setLoading(false);
@@ -185,8 +191,8 @@ export default function ClientProgress() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Goal Progress</p>
               <p className="text-2xl font-bold text-gray-900">
-                {client.goals?.weight ? 
-                  `${Math.round((currentWeight / client.goals.weight) * 100)}%` : 
+                {client.goalWeight ? 
+                  `${Math.round((currentWeight / client.goalWeight) * 100)}%` : 
                   'N/A'
                 }
               </p>

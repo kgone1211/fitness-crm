@@ -27,18 +27,23 @@ export default function ClientGoals() {
   useEffect(() => {
     const loadClientData = async () => {
       try {
-        const clientId = '1';
-        const clients = db.getClients();
-        const clientData = clients.find(c => c.id === clientId);
-        setClient(clientData || null);
-        
-        if (clientData?.goals) {
-          setGoals({
-            weight: clientData.goals.weight?.toString() || '',
-            description: clientData.goals.description || '',
-            targetDate: clientData.goals.targetDate || ''
-          });
+        // Get client data from localStorage (set during login)
+        const clientData = localStorage.getItem('client-data');
+        if (!clientData) {
+          // No client data, redirect to login
+          window.location.href = '/client/login';
+          return;
         }
+
+        const parsedClient = JSON.parse(clientData);
+        setClient(parsedClient);
+        
+        // Set goals from client data
+        setGoals({
+          weight: parsedClient.goalWeight?.toString() || '',
+          description: parsedClient.goals?.description || '',
+          targetDate: parsedClient.goals?.targetDate || ''
+        });
         
         setLoading(false);
       } catch (error) {

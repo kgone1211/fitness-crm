@@ -23,8 +23,16 @@ export default function ClientSchedule() {
   useEffect(() => {
     const loadWorkouts = async () => {
       try {
-        const clientId = '1';
-        const clientWorkouts = db.getWorkoutSessions('1', clientId);
+        // Get client data from localStorage (set during login)
+        const clientData = localStorage.getItem('client-data');
+        if (!clientData) {
+          // No client data, redirect to login
+          window.location.href = '/client/login';
+          return;
+        }
+
+        const parsedClient = JSON.parse(clientData);
+        const clientWorkouts = db.getWorkoutSessions('1', parsedClient.id);
         setWorkouts(clientWorkouts);
         setLoading(false);
       } catch (error) {
