@@ -18,17 +18,26 @@ export default function ClientLogin() {
     setError('');
 
     try {
-      // In a real app, this would validate credentials with a backend
-      // For demo purposes, we'll simulate a login
-      if (email === 'alice@example.com' && password === 'password') {
-        // Store authentication token (in a real app)
-        localStorage.setItem('client-token', 'demo-token');
+      const response = await fetch('/api/client/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Store authentication token
+        localStorage.setItem('client-token', data.token);
+        localStorage.setItem('client-data', JSON.stringify(data.client));
         router.push('/client');
       } else {
-        setError('Invalid email or password');
+        setError(data.error || 'Login failed. Please try again.');
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -120,9 +129,19 @@ export default function ClientLogin() {
           </div>
 
           <div className="text-center">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 mb-4">
               Demo credentials: <br />
               <span className="font-mono">alice@example.com</span> / <span className="font-mono">password</span>
+            </div>
+            <div className="text-sm">
+              <span className="text-gray-600">Don't have an account? </span>
+              <button
+                type="button"
+                onClick={() => router.push('/client/register')}
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Sign up here
+              </button>
             </div>
           </div>
         </form>

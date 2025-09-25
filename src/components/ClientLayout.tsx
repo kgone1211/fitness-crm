@@ -26,14 +26,43 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // In a real app, this would come from authentication
-    // For now, we'll simulate a logged-in client
-    setClient({
-      id: '1',
-      name: 'Alice Johnson',
-      email: 'alice@example.com',
-      avatar: null
-    });
+    const initializeClient = async () => {
+      const token = localStorage.getItem('client-token');
+      const clientData = localStorage.getItem('client-data');
+
+      if (token && clientData) {
+        try {
+          // Verify token with server
+          const response = await fetch('/api/client/auth/verify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setClient(data.client);
+          } else {
+            // Token is invalid, redirect to login
+            localStorage.removeItem('client-token');
+            localStorage.removeItem('client-data');
+            window.location.href = '/client/login';
+          }
+        } catch (error) {
+          console.error('Token verification failed:', error);
+          localStorage.removeItem('client-token');
+          localStorage.removeItem('client-data');
+          window.location.href = '/client/login';
+        }
+      } else {
+        // No token, redirect to login
+        window.location.href = '/client/login';
+      }
+    };
+
+    initializeClient();
   }, []);
 
   const navigation = [
@@ -53,7 +82,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   };
 
   const handleLogout = () => {
-    // In a real app, this would clear authentication tokens
+    // Clear authentication tokens
+    localStorage.removeItem('client-token');
+    localStorage.removeItem('client-data');
     window.location.href = '/client/login';
   };
 

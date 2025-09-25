@@ -66,23 +66,27 @@ export default function ClientDashboard() {
   const [showProgressPictureModal, setShowProgressPictureModal] = useState(false);
 
   useEffect(() => {
-    // Simulate loading data
+    // Load client data from localStorage
     const loadData = async () => {
       setIsLoading(true);
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      setClient({
-        id: '1',
-        name: 'Alice Johnson',
-        email: 'alice@example.com',
-        currentWeight: 145,
-        goalWeight: 135,
-        height: 65,
-        joinDate: '2024-01-15',
-        avatar: null
-      });
+      // Get client data from localStorage (set during login)
+      const clientData = localStorage.getItem('client-data');
+      if (clientData) {
+        const parsedClient = JSON.parse(clientData);
+        setClient({
+          ...parsedClient,
+          joinDate: '2024-01-15', // Default join date
+          avatar: null
+        });
+      } else {
+        // No client data, redirect to login
+        router.push('/client/login');
+        return;
+      }
 
       setWorkouts([
         {
