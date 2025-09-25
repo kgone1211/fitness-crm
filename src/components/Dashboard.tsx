@@ -13,7 +13,8 @@ import {
   Target,
   Plus,
   ExternalLink,
-  User
+  User,
+  Award
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { db } from '@/lib/database';
