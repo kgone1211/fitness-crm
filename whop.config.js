@@ -1,7 +1,7 @@
 /** @type {import('@whop-apps/sdk').WhopConfig} */
 module.exports = {
   // Your app's configuration
-  appId: "app_6ZskuhNqu7LD9V",
+  appId: "app_CG40lYJTdvm70y",
   name: "Fitness CRM",
   description: "A comprehensive fitness client management system",
   version: "1.0.0",
@@ -25,7 +25,7 @@ module.exports = {
   // Development settings
   development: {
     // Local development URL
-    localUrl: "http://localhost:3000",
+    localUrl: "http://localhost:3010",
     
     // Enable hot reload
     hotReload: true
@@ -34,6 +34,6 @@ module.exports = {
   // Production settings
   production: {
     // Your production URL
-    url: "https://your-domain.com"
+    url: "https://fitness-crm-vercel.vercel.app"
   }
 };

@@ -1,23 +1,64 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Users, Activity, Target, Calendar, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Users, Activity, Target, Calendar, BarChart3, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function WhopPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Check if we're in Whop iframe
-    if (window.parent !== window) {
-      // We're in an iframe, likely Whop
-      setIsAuthenticated(true);
-      setLoading(false);
-    } else {
-      // Not in iframe, redirect to main app
-      window.location.href = '/';
-    }
+    const initializeWhop = async () => {
+      try {
+        // Check if we're in Whop iframe
+        if (window.parent !== window) {
+          // We're in an iframe, likely Whop
+          console.log('Running in Whop iframe');
+          
+          // Get URL parameters for Whop authentication
+          const urlParams = new URLSearchParams(window.location.search);
+          const userId = urlParams.get('user_id');
+          const companyId = urlParams.get('company_id');
+          
+          if (userId && companyId) {
+            // Validate with our API
+            const response = await fetch('/api/whop/auth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                user_id: userId,
+                company_id: companyId,
+              }),
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              setUser(data.user);
+              setIsAuthenticated(true);
+            } else {
+              setError('Authentication failed');
+            }
+          } else {
+            // Still allow access if no params (for testing)
+            setIsAuthenticated(true);
+          }
+        } else {
+          // Not in iframe, redirect to main app
+          window.location.href = '/';
+        }
+      } catch (err) {
+        console.error('Whop initialization error:', err);
+        setError('Failed to initialize Whop integration');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeWhop();
   }, []);
 
   const handleBackClick = () => {
@@ -30,6 +71,27 @@ export default function WhopPage() {
         <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-xl">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="text-gray-600 mt-4 text-center">Loading Fitness CRM...</p>
+          <p className="text-sm text-gray-500 mt-2 text-center">Initializing Whop integration...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-xl text-center">
+          <div className="h-16 w-16 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <AlertCircle className="h-8 w-8 text-red-500" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Integration Error</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -58,10 +120,21 @@ export default function WhopPage() {
                     <Activity className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
-                      Fitness CRM
-                    </h1>
+                    <div className="flex items-center space-x-2">
+                      <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                        Fitness CRM
+                      </h1>
+                      {user && (
+                        <div className="flex items-center space-x-1">
+                          <CheckCircle className="h-5 w-5 text-emerald-500" />
+                          <span className="text-sm text-emerald-600 font-medium">Whop Connected</span>
+                        </div>
+                      )}
+                    </div>
                     <p className="text-lg text-gray-600 font-medium">Comprehensive fitness client management system</p>
+                    {user && (
+                      <p className="text-sm text-gray-500">User ID: {user.id}</p>
+                    )}
                   </div>
                 </div>
               </div>
