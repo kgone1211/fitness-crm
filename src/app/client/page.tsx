@@ -483,7 +483,6 @@ export default function ClientDashboard() {
           </div>
         </div>
       </div>
-      </div>
 
       {/* Workout Logging Modal */}
       {showWorkoutModal && (
