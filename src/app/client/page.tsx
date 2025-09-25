@@ -708,6 +708,7 @@ export default function ClientDashboard() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
