@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
 import { db } from '@/lib/database';
+import crypto from 'crypto';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -15,10 +15,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify JWT token
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    // Verify simple token
+    const [payloadB64, signature] = token.split('.');
+    if (!payloadB64 || !signature) {
+      return NextResponse.json(
+        { error: 'Invalid token format' },
+        { status: 401 }
+      );
+    }
 
-    if (decoded.type !== 'client') {
+    const payload = JSON.parse(Buffer.from(payloadB64, 'base64').toString());
+    
+    // Verify signature
+    const expectedSignature = crypto.createHmac('sha256', JWT_SECRET)
+      .update(JSON.stringify(payload))
+      .digest('base64');
+    
+    if (signature !== expectedSignature) {
+      return NextResponse.json(
+        { error: 'Invalid token signature' },
+        { status: 401 }
+      );
+    }
+
+    // Check expiration
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+      return NextResponse.json(
+        { error: 'Token expired' },
+        { status: 401 }
+      );
+    }
+
+    if (payload.type !== 'client') {
       return NextResponse.json(
         { error: 'Invalid token type' },
         { status: 401 }
@@ -27,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     // Get client data
     const clients = db.getClients();
-    const client = clients.find(c => c.id === decoded.clientId);
+    const client = clients.find(c => c.id === payload.clientId);
 
     if (!client) {
       return NextResponse.json(
