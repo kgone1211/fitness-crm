@@ -365,3 +365,5 @@ export default function EditClientModal({ client, onClose, onSave }: EditClientM
     </div>
   );
 }
+
+

@@ -21,3 +21,5 @@ echo "To deploy:"
 echo "1. Push these changes to GitHub"
 echo "2. Vercel will automatically redeploy"
 echo "3. The app should load normally without the loading screen"
+
+

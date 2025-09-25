@@ -55,3 +55,5 @@ After deployment, your app should:
 4. Try incognito/private browsing mode
 
 The app is now optimized for immediate loading in Whop! 🎉
+
+

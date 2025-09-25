@@ -139,3 +139,5 @@ Your fitness CRM should now be live and accessible at your Vercel URL!
 - Check Vercel documentation: https://vercel.com/docs
 - GitHub documentation: https://docs.github.com
 - Whop documentation: https://docs.whop.com
+
+

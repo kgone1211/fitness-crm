@@ -32,3 +32,5 @@ echo ""
 
 echo "🎯 This version will work in Whop without any loading issues!"
 echo "The app loads immediately and doesn't wait for any external SDKs."
+
+

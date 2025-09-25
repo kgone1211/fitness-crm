@@ -247,3 +247,5 @@ whop deploy
 ---
 
 **Your Fitness CRM can be deployed directly to Whop!** 🎉
+
+

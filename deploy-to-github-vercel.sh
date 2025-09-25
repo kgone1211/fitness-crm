@@ -126,3 +126,5 @@ echo "4. Deploy!"
 
 echo ""
 print_success "🎉 Your fitness CRM is ready for deployment!"
+
+

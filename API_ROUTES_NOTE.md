@@ -85,3 +85,5 @@ npm run dev
 ---
 
 **Note**: This is a temporary solution for Whop deployment. The app can be easily restored to full functionality by moving the API routes back.
+
+

@@ -452,3 +452,5 @@ export default function ClientWorkoutSession({
     </div>
   );
 }
+
+

@@ -61,3 +61,5 @@ echo "3. Configure custom domain if needed"
 
 echo ""
 print_success "🎉 Your fitness CRM is now live on Vercel!"
+
+

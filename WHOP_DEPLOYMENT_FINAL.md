@@ -163,3 +163,5 @@ Your Fitness CRM app is now ready for Whop deployment with your real credentials
 ---
 
 **Ready to deploy!** 🚀
+
+

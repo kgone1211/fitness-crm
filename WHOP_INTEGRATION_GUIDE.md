@@ -71,3 +71,5 @@ whop apps update app_v9NgvKg9ABqLE1 --app-url https://YOUR-VERCEL-URL.vercel.app
 2. Update Whop app configuration with Vercel URL
 3. Test the integration
 4. Your app should now work perfectly in Whop! 🎉
+
+

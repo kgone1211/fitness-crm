@@ -77,3 +77,5 @@ echo ""
 echo "📚 For detailed instructions, see WHOP_DIRECT_DEPLOYMENT.md"
 echo ""
 echo "✅ Ready to deploy to Whop!"
+
+

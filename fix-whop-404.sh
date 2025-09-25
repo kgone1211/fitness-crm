@@ -56,3 +56,5 @@ echo "- Create App: https://whop.com/dashboard/apps/new"
 echo ""
 
 echo "💡 Most likely solution: Create a new app in Whop dashboard"
+
+
