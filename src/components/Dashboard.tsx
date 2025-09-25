@@ -50,30 +50,32 @@ export default function Dashboard({ trainerId }: DashboardProps) {
     value, 
     icon: Icon, 
     change, 
-    changeType 
+    changeType,
+    gradient = 'from-blue-500 to-blue-600'
   }: { 
     title: string; 
     value: string | number; 
     icon: React.ComponentType<any>; 
     change?: number; 
     changeType?: 'positive' | 'negative' | 'neutral';
+    gradient?: string;
   }) => (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+    <div className="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl hover:scale-105 transition-all duration-300">
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 mb-2">{value}</p>
           {change !== undefined && (
-            <div className="flex items-center mt-1">
+            <div className="flex items-center">
               {changeType === 'positive' ? (
-                <TrendingUp className="h-4 w-4 text-green-500" />
+                <TrendingUp className="h-4 w-4 text-emerald-500" />
               ) : changeType === 'negative' ? (
                 <TrendingDown className="h-4 w-4 text-red-500" />
               ) : (
                 <div className="h-4 w-4" />
               )}
-              <span className={`text-sm ml-1 ${
-                changeType === 'positive' ? 'text-green-600' : 
+              <span className={`text-sm ml-1 font-medium ${
+                changeType === 'positive' ? 'text-emerald-600' : 
                 changeType === 'negative' ? 'text-red-600' : 
                 'text-gray-600'
               }`}>
@@ -82,29 +84,44 @@ export default function Dashboard({ trainerId }: DashboardProps) {
             </div>
           )}
         </div>
-        <div className="p-3 bg-blue-100 rounded-full">
-          <Icon className="h-6 w-6 text-blue-600" />
+        <div className={`p-4 bg-gradient-to-br ${gradient} rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300`}>
+          <Icon className="h-7 w-7 text-white" />
         </div>
       </div>
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}></div>
     </div>
   );
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
-          <p className="text-lg text-gray-600">Welcome back! Here's what's happening with your clients.</p>
-        </div>
-        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-          <Link href="/clients/add" className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-            <Plus className="h-5 w-5 mr-2" />
-            Add Client
-          </Link>
-          <Link href="/workouts" className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-            Schedule Workout
-          </Link>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-6 sm:space-y-0">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-lg">
+                  <Award className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                    Dashboard
+                  </h1>
+                  <p className="text-lg text-gray-600 font-medium">Welcome back! Here's what's happening with your clients.</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+              <Link href="/clients/add" className="group flex items-center px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:scale-105">
+                <Plus className="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                Add Client
+              </Link>
+              <Link href="/workouts" className="group px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-2xl hover:bg-white/60 hover:border-blue-300 transition-all duration-300 font-medium backdrop-blur-sm hover:scale-105">
+                Schedule Workout
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -116,6 +133,7 @@ export default function Dashboard({ trainerId }: DashboardProps) {
           icon={Users}
           change={12}
           changeType="positive"
+          gradient="from-blue-500 to-blue-600"
         />
         <StatCard
           title="Active Clients"
@@ -123,6 +141,7 @@ export default function Dashboard({ trainerId }: DashboardProps) {
           icon={CheckCircle}
           change={8}
           changeType="positive"
+          gradient="from-emerald-500 to-emerald-600"
         />
         <StatCard
           title="Workouts This Week"
@@ -130,6 +149,7 @@ export default function Dashboard({ trainerId }: DashboardProps) {
           icon={Activity}
           change={-5}
           changeType="negative"
+          gradient="from-orange-500 to-orange-600"
         />
         <StatCard
           title="Avg. Workout Duration"
@@ -137,6 +157,7 @@ export default function Dashboard({ trainerId }: DashboardProps) {
           icon={Clock}
           change={3}
           changeType="positive"
+          gradient="from-purple-500 to-purple-600"
         />
       </div>
 
