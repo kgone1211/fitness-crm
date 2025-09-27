@@ -58,3 +58,4 @@ echo ""
 echo "💡 Most likely solution: Create a new app in Whop dashboard"
 
 
+

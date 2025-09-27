@@ -49,3 +49,4 @@ echo "💡 The app ID in the files (app_6ZskuhNqu7LD9V) might not exist"
 echo "We need to find the actual app ID from your Whop dashboard"
 
 
+

@@ -23,3 +23,4 @@ echo "2. Vercel will automatically redeploy"
 echo "3. The app should load normally without the loading screen"
 
 
+

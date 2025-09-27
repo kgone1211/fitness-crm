@@ -48,3 +48,4 @@ echo ""
 echo "🎯 Your app should now work in Whop with the new credentials!"
 
 
+

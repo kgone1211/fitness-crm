@@ -128,3 +128,4 @@ echo ""
 print_success "🎉 Your fitness CRM is ready for deployment!"
 
 
+

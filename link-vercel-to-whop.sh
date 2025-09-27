@@ -42,3 +42,4 @@ echo "✅ Your app is now ready to be linked to Whop!"
 echo "The whop-manifest.json has been updated with the correct app ID."
 
 
+

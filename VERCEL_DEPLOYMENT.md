@@ -219,3 +219,4 @@ vercel dev
 **Your Fitness CRM app should now be successfully deployed on Vercel!** 🎉
 
 
+

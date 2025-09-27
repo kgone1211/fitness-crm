@@ -115,3 +115,4 @@ export async function validateWhopUser(userId: string): Promise<WhopUser | null>
     return null;
   }
 }
+

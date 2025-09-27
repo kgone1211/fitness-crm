@@ -63,3 +63,4 @@ echo ""
 print_success "🎉 Your fitness CRM is now live on Vercel!"
 
 
+

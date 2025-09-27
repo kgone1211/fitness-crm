@@ -151,3 +151,4 @@ Your Fitness CRM app should now be live on Whop! Users can access it through the
 **Ready to deploy!** 🚀
 
 
+
