@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // This route handles Whop authentication
-  // In a real implementation, you would:
-  // 1. Redirect to Whop's OAuth endpoint
-  // 2. Handle the callback
-  // 3. Exchange the code for tokens
+  const clientId = process.env.WHOP_CLIENT_ID;
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/whop/callback`;
   
-  const whopAuthUrl = `https://whop.com/oauth/authorize?client_id=${process.env.WHOP_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_APP_URL + '/api/auth/whop/callback')}&response_type=code&scope=read`;
+  if (!clientId) {
+    return NextResponse.json({ error: 'WHOP_CLIENT_ID not configured' }, { status: 500 });
+  }
+
+  const whopAuthUrl = new URL('https://whop.com/oauth/authorize');
+  whopAuthUrl.searchParams.set('client_id', clientId);
+  whopAuthUrl.searchParams.set('redirect_uri', redirectUri);
+  whopAuthUrl.searchParams.set('response_type', 'code');
+  whopAuthUrl.searchParams.set('scope', 'read');
   
-  return NextResponse.redirect(whopAuthUrl);
+  return NextResponse.redirect(whopAuthUrl.toString());
 }
