@@ -35,6 +35,6 @@
     "read:companies",
     "write:companies"
   ],
-  "app_url": "https://client-tracking-lovat.vercel.app/whop",
+  "app_url": "https://client-tracking-lovat.vercel.app/whop-direct",
   "iframe_url": "https://client-tracking-lovat.vercel.app/whop"
 }
