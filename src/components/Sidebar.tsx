@@ -110,19 +110,15 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
           const Icon = item.icon;
           const active = isActive(item.href);
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = item.href;
-              }}
-              className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
-                active
-                  ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
-                  : 'text-gray-700 hover:bg-gray-100'
-              } ${collapsed ? 'justify-center' : ''}`}
-            >
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
+                    active
+                      ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  } ${collapsed ? 'justify-center' : ''}`}
+                >
               <Icon className={`h-5 w-5 flex-shrink-0 ${active ? 'text-blue-600' : 'text-gray-500'}`} />
               {!collapsed && (
                 <span className="ml-3">{item.name}</span>
