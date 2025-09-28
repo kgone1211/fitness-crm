@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard,
   Users,
@@ -16,12 +15,10 @@ import {
   Settings,
   Palette,
   FileText,
-  LogOut,
   Menu,
   Target,
   Camera,
-  Ruler,
-  UserCircle
+  Ruler
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -33,7 +30,6 @@ interface SidebarProps {
 export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach' }: SidebarProps) {
   const pathname = usePathname();
   const { brandSettings } = useTheme();
-  const { user, logout } = useAuth();
 
   const coachNavigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -135,30 +131,6 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
           );
         })}
       </nav>
-
-      {/* User Info and Logout */}
-      <div className="border-t border-gray-200 p-4 mt-auto">
-        {user && (
-          <div className={`flex items-center mb-4 ${collapsed ? 'justify-center' : ''}`}>
-            <UserCircle className={`h-8 w-8 text-gray-500 ${!collapsed ? 'mr-3' : ''}`} />
-            {!collapsed && (
-              <div>
-                <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
-              </div>
-            )}
-          </div>
-        )}
-        <button
-          onClick={logout}
-          className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
-            collapsed ? 'justify-center' : ''
-          } text-gray-700 hover:bg-gray-100 w-full`}
-        >
-          <LogOut className="h-5 w-5 flex-shrink-0 text-gray-500" />
-          {!collapsed && <span className="ml-3">Logout</span>}
-        </button>
-      </div>
     </div>
   );
 }
