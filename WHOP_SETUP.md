@@ -1,137 +1,56 @@
-# Whop App Setup Guide
+# Whop Authentication Setup
 
-## 🚀 Getting Your App to Show in Whop
+## Environment Variables Required
 
-To make your FitnessCRM app appear in Whop, follow these steps:
+Add these to your Vercel environment variables:
 
-### 1. **Register Your App in Whop Developer Portal**
-
-1. Go to [Whop Developer Portal](https://dev.whop.com/)
-2. Sign in with your Whop account
-3. Click "Create New App"
-4. Fill in the app details:
-
-```
-App Name: FitnessCRM
-Description: A comprehensive fitness CRM application for trainers to manage clients, track workouts, and monitor progress.
-Category: Fitness & Health
-App ID: app_CG40lYJTdvm70y (already in your .env)
-```
-
-### 2. **Configure App Settings**
-
-In the Whop Developer Portal, set these settings:
-
-**Basic Info:**
-- App Name: `FitnessCRM`
-- Description: `A comprehensive fitness CRM application for trainers to manage clients, track workouts, and monitor progress.`
-- Category: `Fitness & Health`
-- Tags: `fitness, trainer, workout, crm, health`
-
-**App URLs:**
-- Homepage URL: `https://your-domain.com` (or `http://localhost:3000` for development)
-- Redirect URI: `https://your-domain.com/auth/callback` (or `http://localhost:3000/auth/callback` for development)
-- Webhook URL: `https://your-domain.com/api/webhooks/whop`
-
-**Permissions:**
-- `read:users` - Read user information
-- `write:users` - Update user information
-- `read:companies` - Read company information
-- `write:companies` - Update company information
-
-### 3. **Deploy Your App**
-
-For your app to show in Whop, it needs to be publicly accessible:
-
-**Option A: Deploy to Vercel (Recommended)**
 ```bash
-# Install Vercel CLI
-npm i -g vercel
+# Whop App Configuration
+NEXT_PUBLIC_WHOP_APP_ID=your_whop_app_id
+NEXT_PUBLIC_WHOP_API_KEY=your_whop_api_key
+WHOP_CLIENT_ID=your_whop_client_id
+WHOP_CLIENT_SECRET=your_whop_client_secret
 
-# Deploy
-vercel
-
-# Set environment variables in Vercel dashboard
+# App URL
+NEXT_PUBLIC_APP_URL=https://client-tracking-lovat.vercel.app
 ```
 
-**Option B: Deploy to Netlify**
-```bash
-# Build the app
-npm run build
+## Whop App Settings
 
-# Deploy to Netlify
-# Upload the 'out' folder to Netlify
-```
+In your Whop app dashboard, configure:
 
-**Option C: Deploy to Railway**
-```bash
-# Connect your GitHub repo to Railway
-# Railway will automatically deploy
-```
+1. **App URL**: `https://client-tracking-lovat.vercel.app`
+2. **Allowed Origins**: Add your Vercel domain
+3. **OAuth Settings**:
+   - **Redirect URI**: `https://client-tracking-lovat.vercel.app/api/auth/whop/callback`
+   - **Scopes**: `read` (minimum required)
+4. **Embed Settings**: Enable "Allow embedding"
 
-### 4. **Update Environment Variables**
+## Role Determination
 
-After deployment, update your production environment variables:
+The app determines user roles based on:
+1. Company membership (admin = coach)
+2. Permissions (manage_clients = coach)
+3. Custom fields (role field)
+4. Email domain patterns
+5. Default to client
 
-```env
-WHOP_API_KEY=pReJrNujmBUQWtoF2HVvVxV0QhVOmP_FuX2sW04vjgI
-NEXT_PUBLIC_WHOP_APP_ID=app_CG40lYJTdvm70y
-NEXT_PUBLIC_WHOP_AGENT_USER_ID=user_giuHRFRWQBCXr
-NEXT_PUBLIC_WHOP_COMPANY_ID=biz_0iRabAN0PuLJni
-```
+## How It Works
 
-### 5. **Test Your App**
+1. User visits your app
+2. If not authenticated, shows "Sign in with Whop" button
+3. Redirects to Whop's OAuth flow
+4. After authentication, user is redirected back
+5. App determines role (coach/client) and shows appropriate dashboard
 
-1. **Local Testing:**
-   ```bash
-   npm run dev
-   # Visit http://localhost:3000
-   ```
+## Testing
 
-2. **Whop Testing:**
-   - Go to your Whop company dashboard
-   - Look for your app in the "Apps" section
-   - Click "Install" to test the integration
+1. Deploy to Vercel with environment variables
+2. Visit your app URL
+3. Click "Sign in with Whop"
+4. Complete Whop authentication
+5. You'll be redirected to the appropriate dashboard
 
-### 6. **App Manifest**
+## Customization
 
-Your app includes a `whop-manifest.json` file that Whop can read to understand your app's capabilities. This is located at:
-- `https://your-domain.com/whop-manifest.json`
-
-### 7. **Troubleshooting**
-
-**App not showing in Whop:**
-- ✅ Ensure your app is publicly accessible (not localhost)
-- ✅ Check that all required permissions are granted
-- ✅ Verify your app ID matches in both Whop and your environment
-- ✅ Make sure your redirect URIs are correctly configured
-
-**Authentication issues:**
-- ✅ Verify your API key is correct
-- ✅ Check that your app ID matches
-- ✅ Ensure your company ID is correct
-
-**Development vs Production:**
-- For development: Use `http://localhost:3000`
-- For production: Use your deployed domain
-- Update redirect URIs accordingly
-
-### 8. **Next Steps**
-
-Once your app is live in Whop:
-
-1. **Monitor Usage:** Check Whop analytics for app usage
-2. **Gather Feedback:** Collect user feedback through Whop
-3. **Iterate:** Update your app based on user needs
-4. **Scale:** Add more features as your user base grows
-
-### 9. **Support**
-
-If you need help:
-- Check [Whop Developer Documentation](https://dev.whop.com/docs)
-- Contact Whop support
-- Review the app logs for errors
-
----
-
-**Your app is now ready to be a Whop app! 🎉**
+To customize role determination, edit `src/contexts/WhopAuthContext.tsx` in the `determineUserRole` function.

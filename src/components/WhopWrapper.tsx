@@ -10,7 +10,7 @@ interface WhopWrapperProps {
 export default function WhopWrapper({ children }: WhopWrapperProps) {
   return (
     <WhopProvider
-      appId={process.env.NEXT_PUBLIC_WHOP_APP_ID || ''}
+      appId={process.env.NEXT_PUBLIC_WHOP_APP_ID || 'your-whop-app-id'}
       apiKey={process.env.NEXT_PUBLIC_WHOP_API_KEY || ''}
     >
       {children}

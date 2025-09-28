@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useWhopAuth } from '@/contexts/WhopAuthContext';
 import { 
   LayoutDashboard,
   Users,
@@ -92,6 +93,10 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
         )}
         <button
           onClick={(e) => {
+                e.preventDefault();
+                logout();
+                e.preventDefault();
+                logout();
             e.preventDefault();
             e.stopPropagation();
             toggleCollapsed();
@@ -111,6 +116,10 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
               key={item.name}
               href={item.href}
               onClick={(e) => {
+                e.preventDefault();
+                logout();
+                e.preventDefault();
+                logout();
                 e.preventDefault();
                 window.location.href = item.href;
               }}
@@ -134,6 +143,10 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
         <Link
           href="/settings"
           onClick={(e) => {
+                e.preventDefault();
+                logout();
+                e.preventDefault();
+                logout();
             e.preventDefault();
             window.location.href = '/settings';
           }}
