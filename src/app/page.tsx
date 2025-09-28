@@ -2,21 +2,21 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useWhopAuth } from '@/contexts/WhopAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import CoachDashboard from '@/components/CoachDashboard';
 
 export default function Home() {
-  const { user, isLoading, isAuthenticated } = useWhopAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user) {
+    if (!isLoading && user) {
       if (user.role !== 'coach') {
         router.push('/client');
       }
     }
-  }, [user, isLoading, isAuthenticated, router]);
+  }, [user, isLoading, router]);
 
   if (isLoading) {
     return (
@@ -29,7 +29,7 @@ export default function Home() {
     );
   }
 
-  if (!isAuthenticated || !user || user.role !== 'coach') {
+  if (!user || user.role !== 'coach') {
     return null;
   }
 

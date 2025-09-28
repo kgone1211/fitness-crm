@@ -1,37 +1,27 @@
 {
-  "app_id": "app_6ZskuhNqu7LD9V",
-  "name": "Fitness CRM",
-  "description": "A comprehensive fitness CRM application for trainers to manage clients, track workouts, and monitor progress.",
+  "name": "FitCoach Pro",
+  "description": "Fitness coaching CRM for trainers and clients",
   "version": "1.0.0",
-  "author": "Zeke Gonzalez",
-  "homepage": "https://fitness-crm-vercel.vercel.app",
-  "icon": "https://fitness-crm-vercel.vercel.app/favicon.ico",
-  "screenshots": [
-    "https://fitness-crm-vercel.vercel.app/screenshot1.png"
-  ],
-  "categories": ["fitness", "crm", "health"],
-  "tags": ["fitness", "trainer", "workout", "crm", "health"],
-  "pricing": {
-    "type": "free",
-    "price": 0,
-    "currency": "USD"
-  },
-  "permissions": [
-    "read:users",
-    "write:users",
-    "read:companies",
-    "write:companies"
-  ],
-  "webhooks": [],
+  "author": "Your Company",
+  "app_url": "https://client-tracking-lovat.vercel.app",
   "redirect_uris": [
-    "https://fitness-crm-vercel.vercel.app",
-    "http://localhost:3000"
+    "https://client-tracking-lovat.vercel.app/api/auth/whop/callback"
   ],
-  "scopes": [
-    "read:users",
-    "write:users",
-    "read:companies",
-    "write:companies"
+  "scopes": ["read", "write"],
+  "categories": ["health", "productivity"],
+  "icon": "https://client-tracking-lovat.vercel.app/icon.png",
+  "screenshots": [
+    "https://client-tracking-lovat.vercel.app/screenshot1.png",
+    "https://client-tracking-lovat.vercel.app/screenshot2.png"
   ],
-  "app_url": "https://fitness-crm-vercel.vercel.app"
+  "embed_settings": {
+    "allow_embedding": true,
+    "width": "100%",
+    "height": "100vh",
+    "resizable": true
+  },
+  "permissions": {
+    "read": ["user", "company"],
+    "write": ["user_profile"]
+  }
 }

@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useWhopAuth } from '@/contexts/WhopAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard,
   Users,

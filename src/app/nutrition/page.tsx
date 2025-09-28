@@ -530,3 +530,4 @@ export default function NutritionPage() {
     </Layout>
   );
 }
+export const dynamic = 'force-dynamic';

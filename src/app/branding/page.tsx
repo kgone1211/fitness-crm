@@ -623,3 +623,4 @@ Generated on: ${new Date().toLocaleDateString()}
     </Layout>
   );
 }
+export const dynamic = 'force-dynamic';

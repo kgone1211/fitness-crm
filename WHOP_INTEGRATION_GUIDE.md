@@ -1,76 +1,122 @@
-# 🔗 Whop Integration Guide
+# Whop Integration Setup Guide
 
-## Step 1: Deploy to Vercel
-1. Push your changes to GitHub
-2. Vercel will automatically deploy
-3. Get your Vercel URL (e.g., `https://fitness-crm-vercel.vercel.app`)
+## 🚀 Quick Setup Checklist
 
-## Step 2: Update Whop App Configuration
+### 1. Whop App Dashboard Configuration
 
-### Option A: Whop Dashboard
-1. Go to [Whop Dashboard](https://whop.com/dashboard)
-2. Find your app: `app_v9NgvKg9ABqLE1`
-3. Go to **Settings** → **App Configuration**
-4. Update these fields:
-   - **App URL**: `https://YOUR-VERCEL-URL.vercel.app`
-   - **Redirect URI**: `https://YOUR-VERCEL-URL.vercel.app`
-   - **Homepage**: `https://YOUR-VERCEL-URL.vercel.app`
+Go to your Whop app dashboard and configure:
 
-### Option B: Whop CLI
+**App Settings:**
+- **App Name**: `FitCoach Pro`
+- **App URL**: `https://client-tracking-lovat.vercel.app`
+- **Description**: `Fitness coaching CRM for trainers and clients`
+
+**OAuth Settings:**
+- **Redirect URI**: `https://client-tracking-lovat.vercel.app/api/auth/whop/callback`
+- **Scopes**: `read`, `write`
+- **Allowed Origins**: `https://client-tracking-lovat.vercel.app`
+
+**Embed Settings:**
+- ✅ **Allow Embedding**: Enable this
+- **Width**: `100%`
+- **Height**: `100vh`
+- ✅ **Resizable**: Enable this
+
+### 2. Vercel Environment Variables
+
+Add these to your Vercel project:
+
 ```bash
-whop apps update app_v9NgvKg9ABqLE1 --app-url https://YOUR-VERCEL-URL.vercel.app
+# Required Whop OAuth
+WHOP_CLIENT_ID=your_whop_client_id
+WHOP_CLIENT_SECRET=your_whop_client_secret
+
+# Whop SDK
+NEXT_PUBLIC_WHOP_APP_ID=your_whop_app_id
+NEXT_PUBLIC_WHOP_API_KEY=your_whop_api_key
+
+# App Configuration
+NEXT_PUBLIC_APP_URL=https://client-tracking-lovat.vercel.app
 ```
 
-## Step 3: Set Environment Variables in Vercel
-1. Go to Vercel Dashboard → Your Project → Settings → Environment Variables
-2. Add these variables:
-   ```
-   WHOP_API_KEY=faEFh0WsrzBwnORaAozLoBspn7XmzegskNx62l29u_A
-   NEXT_PUBLIC_WHOP_APP_ID=app_v9NgvKg9ABqLE1
-   NEXT_PUBLIC_WHOP_AGENT_USER_ID=user_y3Kg36SNnr8R7
-   NEXT_PUBLIC_WHOP_COMPANY_ID=biz_0iRabAN0PuLJni
-   ```
+### 3. App Structure
 
-## Step 4: Test the Integration
-1. Go to: `https://whop.com/apps/app_v9NgvKg9ABqLE1/install/`
-2. Click "Install App"
-3. It should redirect to your Vercel app
-4. The app should load without the loading screen
+Your app now has these key routes:
 
-## Step 5: Verify Integration
-- The app should show "Welcome to Fitness CRM" or user data
-- No infinite loading screen
-- All features should work normally
+- `/` - Redirects to appropriate page based on context
+- `/whop` - Main app for Whop users
+- `/landing` - Landing page for direct access
+- `/api/auth/whop` - OAuth initiation
+- `/api/auth/whop/callback` - OAuth callback
 
-## Troubleshooting
+### 4. Testing the Integration
 
-### If app doesn't show in Whop:
-1. Check that the App URL is correct in Whop dashboard
-2. Verify the app_id matches: `app_v9NgvKg9ABqLE1`
-3. Make sure the app is published/active in Whop
+1. **Deploy to Vercel** with all environment variables
+2. **Visit your app** at `https://client-tracking-lovat.vercel.app`
+3. **Test Whop integration** by visiting `/whop` directly
+4. **Check Whop dashboard** for your app listing
 
-### If app loads but shows loading screen:
-1. Check browser console for errors
-2. Verify environment variables are set
-3. Check that the Vercel URL is accessible
+### 5. Whop App Manifest
 
-### If redirect doesn't work:
-1. Check redirect URIs in Whop app settings
-2. Make sure the app URL is exactly correct
-3. Try clearing browser cache
+Your app includes a `whop-manifest.json` with:
+- App metadata
+- Embedding settings
+- OAuth configuration
+- Permissions
 
-## Files Updated for Integration:
-- ✅ `src/components/WhopApp.tsx` - Proper Whop SDK integration
-- ✅ `src/app/page.tsx` - Updated to use WhopApp
-- ✅ `public/whop-sdk.js` - Whop SDK script
-- ✅ `public/whop-manifest.json` - App manifest
-- ✅ `src/app/layout.tsx` - Includes Whop SDK script
+### 6. Role Detection
 
-## Next Steps:
-1. Deploy these changes to Vercel
-2. Update Whop app configuration with Vercel URL
-3. Test the integration
-4. Your app should now work perfectly in Whop! 🎉
+The app automatically determines user roles:
+- **Coach**: Company admin, has manage_clients permission, or email contains @coach.
+- **Client**: Default for all other users
 
+### 7. Common Issues & Solutions
 
+**App not showing in Whop:**
+- ✅ Check embed settings are enabled
+- ✅ Verify app URL is correct
+- ✅ Ensure OAuth redirect URI matches exactly
+- ✅ Confirm environment variables are set
 
+**Authentication not working:**
+- ✅ Verify WHOP_CLIENT_ID and WHOP_CLIENT_SECRET
+- ✅ Check redirect URI in Whop dashboard
+- ✅ Ensure scopes include 'read' minimum
+
+**App not loading in iframe:**
+- ✅ Enable embedding in Whop settings
+- ✅ Check CORS headers
+- ✅ Verify HTTPS is used
+
+### 8. Next Steps
+
+1. **Submit for Review**: If required by Whop
+2. **Test with Real Users**: Create test accounts
+3. **Monitor Logs**: Check Vercel function logs
+4. **Gather Feedback**: Test with actual coaches/clients
+
+## 🔧 Development Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Run locally
+npm run dev
+
+# Build for production
+npm run build
+
+# Deploy to Vercel
+vercel --prod
+```
+
+## 📞 Support
+
+If you're still having issues:
+1. Check Vercel function logs
+2. Verify all environment variables
+3. Test OAuth flow manually
+4. Contact Whop support if needed
+
+Your app should now be properly integrated with Whop! 🎉

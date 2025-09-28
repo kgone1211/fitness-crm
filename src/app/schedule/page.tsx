@@ -379,3 +379,4 @@ export default function SchedulePage() {
     </Layout>
   );
 }
+export const dynamic = 'force-dynamic';

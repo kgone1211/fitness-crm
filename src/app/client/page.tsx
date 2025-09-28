@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useWhopAuth } from '@/contexts/WhopAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import {
   Activity,
@@ -23,11 +23,11 @@ import {
 import { useGoals } from '@/contexts/GoalsContext';
 
 export default function ClientDashboard() {
-  const { user, isLoading, isAuthenticated } = useWhopAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading if (!isLoading) {if (!isLoading) { isAuthenticated if (!isLoading) {if (!isLoading) { user) {
+    if (!isLoading && user) {
       if (!user) {
         router.push('/login');
       } else if (user.role !== 'client') {
@@ -47,7 +47,7 @@ export default function ClientDashboard() {
     );
   }
 
-  if (!isAuthenticated || !user || user.role !== 'client') {
+  if (!user || user.role !== 'client') {
     return null;
   }
 

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://client-tracking-lovat.vercel.app/sitemap.xml
