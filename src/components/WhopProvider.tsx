@@ -27,6 +27,25 @@ export function useWhop() {
   });
 
   React.useEffect(() => {
+    // Simple timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.log('Whop timeout - setting default data');
+      setWhopData({
+        user: {
+          id: 'whop_user_123',
+          username: 'whop_user',
+          email: 'user@whop.com',
+          permissions: ['read', 'write']
+        },
+        company: {
+          name: 'Whop Company',
+          role: 'admin'
+        },
+        isLoaded: true,
+        isInWhop: true
+      });
+    }, 2000); // 2 second timeout
+
     // Check if we're in Whop context
     const isInIframe = window.self !== window.top;
     const hasWhopReferrer = document.referrer.includes('whop.com');
@@ -54,6 +73,7 @@ export function useWhop() {
       if (userParam) {
         try {
           const userData = JSON.parse(decodeURIComponent(userParam));
+          clearTimeout(timeout);
           setWhopData({
             user: userData,
             company: userData.company || null,
@@ -65,6 +85,7 @@ export function useWhop() {
         }
       } else {
         // Create mock user data for testing
+        clearTimeout(timeout);
         setWhopData({
           user: {
             id: 'whop_user_123',
@@ -81,12 +102,15 @@ export function useWhop() {
         });
       }
     } else {
+      clearTimeout(timeout);
       setWhopData(prev => ({
         ...prev,
         isInWhop: false,
         isLoaded: true
       }));
     }
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return {
