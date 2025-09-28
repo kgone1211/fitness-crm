@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
+import {
   LayoutDashboard,
   Users,
   Calendar,
@@ -18,11 +18,10 @@ import {
   FileText,
   LogOut,
   Menu,
-  X,
   Target,
   Camera,
   Ruler,
-  TrendingUp
+  UserCircle
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -34,6 +33,7 @@ interface SidebarProps {
 export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach' }: SidebarProps) {
   const pathname = usePathname();
   const { brandSettings } = useTheme();
+  const { user, logout } = useAuth();
 
   const coachNavigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -54,7 +54,8 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
     { name: 'My Nutrition', href: '/client/nutrition', icon: Utensils },
     { name: 'My Schedule', href: '/client/schedule', icon: Calendar },
     { name: 'My Check-ins', href: '/client/checkins', icon: Heart },
-    { name: 'My Progress', href: '/client/progress', icon: TrendingUp },
+    { name: 'My Progress', href: '/client/progress', icon: Target },
+    { name: 'Settings', href: '/client/settings', icon: Settings },
   ];
 
   const navigation = userRole === 'coach' ? coachNavigation : clientNavigation;
@@ -69,23 +70,27 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
   return (
     <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-50 ${
       collapsed ? 'w-16' : 'w-64'
-    }`}>
+    } flex flex-col`}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         {!collapsed && (
           <div className="flex items-center space-x-3">
-            {brandSettings.logo && (
-              <img 
-                src={brandSettings.logo} 
-                alt="Logo" 
+            {brandSettings.logo ? (
+              <img
+                src={brandSettings.logo}
+                alt="Logo"
                 className="w-8 h-8 rounded"
               />
+            ) : (
+              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                <span className="text-white text-lg font-bold">{brandSettings.companyName.charAt(0)}</span>
+              </div>
             )}
             <div>
               <h1 className="text-lg font-bold text-gray-900">
                 {brandSettings.companyName}
               </h1>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-500">
                 {brandSettings.tagline}
               </p>
             </div>
@@ -93,18 +98,15 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
         )}
         <button
           onClick={(e) => {
-                e.preventDefault();
-                logout();
-                e.preventDefault();
-                logout();
             e.preventDefault();
             e.stopPropagation();
             toggleCollapsed();
           }}
           className="text-gray-500 hover:bg-gray-100 p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
         >
-          {collapsed ? <Menu className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>      </div>
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-2">
@@ -117,19 +119,15 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
               href={item.href}
               onClick={(e) => {
                 e.preventDefault();
-                logout();
-                e.preventDefault();
-                logout();
-                e.preventDefault();
                 window.location.href = item.href;
               }}
               className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
                 active
-                  ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+                  ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                  : 'text-gray-700 hover:bg-gray-100'
+              } ${collapsed ? 'justify-center' : ''}`}
             >
-              <Icon className="h-5 w-5 flex-shrink-0" />
+              <Icon className={`h-5 w-5 flex-shrink-0 ${active ? 'text-blue-600' : 'text-gray-500'}`} />
               {!collapsed && (
                 <span className="ml-3">{item.name}</span>
               )}
@@ -138,29 +136,28 @@ export default function Sidebar({ collapsed, toggleCollapsed, userRole = 'coach'
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="border-t border-gray-200 p-4">
-        <Link
-          href="/settings"
-          onClick={(e) => {
-                e.preventDefault();
-                logout();
-                e.preventDefault();
-                logout();
-            e.preventDefault();
-            window.location.href = '/settings';
-          }}
+      {/* User Info and Logout */}
+      <div className="border-t border-gray-200 p-4 mt-auto">
+        {user && (
+          <div className={`flex items-center mb-4 ${collapsed ? 'justify-center' : ''}`}>
+            <UserCircle className={`h-8 w-8 text-gray-500 ${!collapsed ? 'mr-3' : ''}`} />
+            {!collapsed && (
+              <div>
+                <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
+              </div>
+            )}
+          </div>
+        )}
+        <button
+          onClick={logout}
           className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
-            isActive('/settings')
-              ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
-              : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-          }`}
+            collapsed ? 'justify-center' : ''
+          } text-gray-700 hover:bg-gray-100 w-full`}
         >
-          <Settings className="h-5 w-5 flex-shrink-0" />
-          {!collapsed && (
-            <span className="ml-3">Settings</span>
-          )}
-        </Link>
+          <LogOut className="h-5 w-5 flex-shrink-0 text-gray-500" />
+          {!collapsed && <span className="ml-3">Logout</span>}
+        </button>
       </div>
     </div>
   );
