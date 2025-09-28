@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useWhop } from '@/components/WhopProvider';
 
 export const dynamic = 'force-dynamic';
 
 export default function DebugPage() {
+  const { user, company, isLoaded, isInWhop } = useWhop();
   const [debugInfo, setDebugInfo] = useState<any>({});
   const [isWhopContext, setIsWhopContext] = useState(false);
 
@@ -24,6 +26,12 @@ export default function DebugPage() {
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
         NEXT_PUBLIC_WHOP_APP_ID: process.env.NEXT_PUBLIC_WHOP_APP_ID ? 'SET' : 'NOT SET'
       },
+      whopContext: {
+        isInWhop,
+        isLoaded,
+        user: user ? { id: user.id, email: user.email } : null,
+        company: company ? { name: company.name } : null
+      },
       timestamp: new Date().toISOString()
     };
 
@@ -37,7 +45,7 @@ export default function DebugPage() {
       window.location.hostname.includes('whop');
     
     setIsWhopContext(whopContext);
-  }, []);
+  }, [isInWhop, isLoaded, user, company]);
 
   const testUrls = [
     { name: 'Main App', url: 'https://client-tracking-lovat.vercel.app' },
