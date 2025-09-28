@@ -8,7 +8,7 @@ export default function Home() {
 
   return (
     <ThemeProvider>
-      <Layout>
+      <Layout userRole="coach">
         <Dashboard trainerId={trainerId} />
       </Layout>
     </ThemeProvider>

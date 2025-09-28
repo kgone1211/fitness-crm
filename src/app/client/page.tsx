@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Layout from '@/components/Layout';
 import { 
   Activity, 
   Target, 
@@ -12,7 +13,11 @@ import {
   Weight,
   TrendingUp,
   Clock,
-  CheckCircle
+  CheckCircle,
+  Dumbbell,
+  Utensils,
+  Scale,
+  Heart
 } from 'lucide-react';
 
 export default function ClientDashboard() {
@@ -21,12 +26,13 @@ export default function ClientDashboard() {
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [showNutritionModal, setShowNutritionModal] = useState(false);
   const [showProgressPictureModal, setShowProgressPictureModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'calendar' | 'nutrition' | 'workouts'>('overview');
   const router = useRouter();
 
   useEffect(() => {
     // Load client data from localStorage (set during login)
     const loadData = async () => {
-      setIsLoading(true);
+      setLoading(true);
 
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -38,7 +44,10 @@ export default function ClientDashboard() {
         setClient({
           ...parsedClient,
           joinDate: '2024-01-15', // Default join date
-          avatar: null
+          avatar: null,
+          currentWeight: parsedClient.currentWeight || 180,
+          goalWeight: parsedClient.goalWeight || 160,
+          name: parsedClient.name || 'Client'
         });
       } else {
         // No client data, redirect to login
@@ -48,7 +57,7 @@ export default function ClientDashboard() {
 
       // Simulate loading additional data
       await new Promise(resolve => setTimeout(resolve, 500));
-      setIsLoading(false);
+      setLoading(false);
     };
 
     loadData();
@@ -74,292 +83,422 @@ export default function ClientDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
+      <Layout userRole="client">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </Layout>
     );
   }
 
   if (!client) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Client Not Found</h2>
-          <p className="text-gray-600">Unable to load your dashboard data.</p>
+      <Layout userRole="client">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Client Not Found</h2>
+            <p className="text-gray-600">Unable to load your dashboard data.</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   const weightLoss = client.goalWeight ? client.currentWeight - client.goalWeight : 0;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
-        <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-xl">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight mb-4">
-              Welcome back, {client.name}!
-            </h1>
-            <p className="text-lg text-gray-600 font-medium">
-              Here's your fitness progress and upcoming activities.
-            </p>
+    <Layout userRole="client">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
+          <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-xl">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight mb-4">
+                Welcome back, {client.name}!
+              </h1>
+              <p className="text-lg text-gray-600 font-medium">
+                Here's your fitness progress and upcoming activities.
+              </p>
+            </div>
           </div>
         </div>
+
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`px-6 py-3 font-medium ${
+                activeTab === 'overview'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <Activity className="h-4 w-4 inline mr-2" />
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('calendar')}
+              className={`px-6 py-3 font-medium ${
+                activeTab === 'calendar'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <Calendar className="h-4 w-4 inline mr-2" />
+              Calendar & Goals
+            </button>
+            <button
+              onClick={() => setActiveTab('nutrition')}
+              className={`px-6 py-3 font-medium ${
+                activeTab === 'nutrition'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <Utensils className="h-4 w-4 inline mr-2" />
+              Nutrition
+            </button>
+            <button
+              onClick={() => setActiveTab('workouts')}
+              className={`px-6 py-3 font-medium ${
+                activeTab === 'workouts'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <Dumbbell className="h-4 w-4 inline mr-2" />
+              Workouts
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-6">
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Current Weight */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Scale className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-500">Current Weight</p>
+                        <p className="text-2xl font-bold text-gray-900">{client.currentWeight} lbs</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Goal Progress */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <Target className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-500">Goal Progress</p>
+                        <p className="text-2xl font-bold text-gray-900">{weightLoss} lbs to go</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Workouts This Week */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <Dumbbell className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-500">This Week</p>
+                        <p className="text-2xl font-bold text-gray-900">3</p>
+                        <p className="text-sm text-gray-500">workouts</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Success Rate */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <TrendingUp className="h-6 w-6 text-orange-600" />
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-500">Success Rate</p>
+                        <p className="text-2xl font-bold text-gray-900">85%</p>
+                        <p className="text-sm text-gray-500">goal completion</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button 
+                      onClick={handleAddWorkout}
+                      className="flex items-center justify-center p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+                    >
+                      <Dumbbell className="h-6 w-6 text-blue-600 mr-3" />
+                      <span className="font-medium text-gray-900">Log Workout</span>
+                    </button>
+                    <button 
+                      onClick={handleAddNutrition}
+                      className="flex items-center justify-center p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+                    >
+                      <Utensils className="h-6 w-6 text-green-600 mr-3" />
+                      <span className="font-medium text-gray-900">Track Nutrition</span>
+                    </button>
+                    <button 
+                      onClick={handleAddProgressPicture}
+                      className="flex items-center justify-center p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+                    >
+                      <Plus className="h-6 w-6 text-orange-600 mr-3" />
+                      <span className="font-medium text-gray-900">Add Progress Pic</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Recent Activity</h2>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <div>
+                        <p className="font-medium text-gray-900">Completed morning workout</p>
+                        <p className="text-sm text-gray-500">45 minutes • 2 hours ago</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <Utensils className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="font-medium text-gray-900">Logged breakfast</p>
+                        <p className="text-sm text-gray-500">450 calories • 4 hours ago</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <Scale className="h-5 w-5 text-purple-600" />
+                      <div>
+                        <p className="font-medium text-gray-900">Updated weight</p>
+                        <p className="text-sm text-gray-500">180 lbs • Yesterday</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'calendar' && (
+              <div className="space-y-6">
+                <div className="text-center py-8">
+                  <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Calendar & Goals</h3>
+                  <p className="text-gray-600">Track your goals and daily tasks here.</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'nutrition' && (
+              <div className="space-y-6">
+                <div className="text-center py-8">
+                  <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Nutrition Tracking</h3>
+                  <p className="text-gray-600">Track your daily macros and meal plans here.</p>
+                  <button
+                    onClick={handleAddNutrition}
+                    className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  >
+                    Start Tracking
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'workouts' && (
+              <div className="space-y-6">
+                <div className="text-center py-8">
+                  <Dumbbell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Workout Tracking</h3>
+                  <p className="text-gray-600">Log your workouts and track your progress here.</p>
+                  <button
+                    onClick={handleAddWorkout}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Log Workout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Workout Logging Modal */}
+        {showWorkoutModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Log Workout</h3>
+                <button 
+                  onClick={handleCloseModals}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Workout Name
+                  </label>
+                  <input 
+                    type="text" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter workout name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duration (minutes)
+                  </label>
+                  <input 
+                    type="number" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="30"
+                  />
+                </div>
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    type="button"
+                    onClick={handleCloseModals}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  >
+                    Log Workout
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Nutrition Tracking Modal */}
+        {showNutritionModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Track Nutrition</h3>
+                <button 
+                  onClick={handleCloseModals}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Meal Type
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>Breakfast</option>
+                    <option>Lunch</option>
+                    <option>Dinner</option>
+                    <option>Snack</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Calories
+                  </label>
+                  <input 
+                    type="number" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="500"
+                  />
+                </div>
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    type="button"
+                    onClick={handleCloseModals}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                  >
+                    Log Meal
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Progress Picture Modal */}
+        {showProgressPictureModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Add Progress Picture</h3>
+                <button 
+                  onClick={handleCloseModals}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Image
+                  </label>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Notes (optional)
+                  </label>
+                  <textarea 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder="Add any notes about your progress..."
+                  />
+                </div>
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    type="button"
+                    onClick={handleCloseModals}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700"
+                  >
+                    Upload Picture
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Main content */}
-      <div>
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Current Weight */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Activity className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Current Weight</p>
-                <p className="text-2xl font-bold text-gray-900">{client.currentWeight} lbs</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Goal Progress */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Target className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Goal Progress</p>
-                <p className="text-2xl font-bold text-gray-900">{weightLoss} lbs to go</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Workouts This Week */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Calendar className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">This Week</p>
-                <p className="text-2xl font-bold text-gray-900">3</p>
-                <p className="text-sm text-gray-500">workouts</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Success Rate */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Success Rate</p>
-                <p className="text-2xl font-bold text-gray-900">85%</p>
-                <p className="text-sm text-gray-500">goal completion</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button 
-              onClick={handleAddWorkout}
-              className="flex items-center justify-center p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-            >
-              <Activity className="h-6 w-6 text-blue-600 mr-3" />
-              <span className="font-medium text-gray-900">Log Workout</span>
-            </button>
-            <button 
-              onClick={handleAddNutrition}
-              className="flex items-center justify-center p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-            >
-              <BarChart3 className="h-6 w-6 text-green-600 mr-3" />
-              <span className="font-medium text-gray-900">Track Nutrition</span>
-            </button>
-            <button 
-              onClick={handleAddProgressPicture}
-              className="flex items-center justify-center p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-            >
-              <Plus className="h-6 w-6 text-orange-600 mr-3" />
-              <span className="font-medium text-gray-900">Add Progress Pic</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Workout Logging Modal */}
-      {showWorkoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Log Workout</h3>
-              <button 
-                onClick={handleCloseModals}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Workout Name
-                </label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter workout name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Duration (minutes)
-                </label>
-                <input 
-                  type="number" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="30"
-                />
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button 
-                  type="button"
-                  onClick={handleCloseModals}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                >
-                  Log Workout
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Nutrition Tracking Modal */}
-      {showNutritionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Track Nutrition</h3>
-              <button 
-                onClick={handleCloseModals}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Meal Type
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Breakfast</option>
-                  <option>Lunch</option>
-                  <option>Dinner</option>
-                  <option>Snack</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Calories
-                </label>
-                <input 
-                  type="number" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="500"
-                />
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button 
-                  type="button"
-                  onClick={handleCloseModals}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                >
-                  Log Meal
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Progress Picture Modal */}
-      {showProgressPictureModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Add Progress Picture</h3>
-              <button 
-                onClick={handleCloseModals}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Upload Image
-                </label>
-                <input 
-                  type="file" 
-                  accept="image/*"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Notes (optional)
-                </label>
-                <textarea 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={3}
-                  placeholder="Add any notes about your progress..."
-                />
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button 
-                  type="button"
-                  onClick={handleCloseModals}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700"
-                >
-                  Upload Picture
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+    </Layout>
   );
 }

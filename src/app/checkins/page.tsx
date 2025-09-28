@@ -1,273 +1,325 @@
-'use client';
-
-import React, { useState } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Calendar, 
-  User, 
-  Smile, 
-  Battery,
-  Moon,
-  Droplets,
-  Camera,
-  MessageSquare,
-  MoreVertical,
-  Edit,
-  Eye
-} from 'lucide-react';
-import { db } from '@/lib/database';
-import { CheckIn } from '@/types';
+import Layout from '@/components/Layout';
+import { Heart, Users, TrendingUp, Calendar, Clock, CheckCircle, AlertCircle, MessageSquare } from 'lucide-react';
 
 export default function CheckInsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'daily' | 'weekly' | 'monthly'>('all');
-  const [selectedClient, setSelectedClient] = useState<string>('all');
-  
-  const checkIns = db.getCheckIns();
-  const clients = db.getClients();
+  const checkIns = [
+    {
+      id: '1',
+      clientName: 'John Doe',
+      date: '2024-01-22',
+      mood: 4,
+      energy: 3,
+      sleep: 7.5,
+      water: 8,
+      weight: 180,
+      notes: 'Feeling great today! Had a productive workout and feeling motivated.',
+      completed: true,
+      submittedAt: '2024-01-22T08:30:00Z'
+    },
+    {
+      id: '2',
+      clientName: 'Jane Smith',
+      date: '2024-01-22',
+      mood: 5,
+      energy: 4,
+      sleep: 8,
+      water: 10,
+      weight: 140,
+      notes: 'Excellent day! Hit all my macro targets and had amazing energy.',
+      completed: true,
+      submittedAt: '2024-01-22T09:15:00Z'
+    },
+    {
+      id: '3',
+      clientName: 'Mike Johnson',
+      date: '2024-01-21',
+      mood: 2,
+      energy: 2,
+      sleep: 5,
+      water: 4,
+      weight: 200,
+      notes: 'Struggling with motivation today. Had a stressful day at work.',
+      completed: true,
+      submittedAt: '2024-01-21T20:45:00Z'
+    },
+    {
+      id: '4',
+      clientName: 'Sarah Wilson',
+      date: '2024-01-22',
+      mood: 3,
+      energy: 3,
+      sleep: 6,
+      water: 6,
+      weight: null,
+      notes: 'Average day. Need to focus on hydration and sleep.',
+      completed: false,
+      submittedAt: null
+    }
+  ];
 
-  const getClientName = (clientId: string) => {
-    const client = clients.find(c => c.id === clientId);
-    return client?.name || 'Unknown Client';
+  const getMoodEmoji = (mood: number) => {
+    switch (mood) {
+      case 1: return '😞';
+      case 2: return '😐';
+      case 3: return '😊';
+      case 4: return '😄';
+      case 5: return '🤩';
+      default: return '😊';
+    }
   };
 
-  const getMoodEmoji = (mood: CheckIn['mood']) => {
-    const emojis = ['😞', '😐', '🙂', '😊', '😄'];
-    return emojis[mood - 1];
+  const getMoodColor = (mood: number) => {
+    if (mood >= 4) return 'text-green-600';
+    if (mood >= 3) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
-  const getMoodLabel = (mood: CheckIn['mood']) => {
-    const labels = ['Very Low', 'Low', 'Neutral', 'Good', 'Excellent'];
-    return labels[mood - 1];
+  const getEnergyEmoji = (energy: number) => {
+    switch (energy) {
+      case 1: return '😴';
+      case 2: return '😑';
+      case 3: return '😌';
+      case 4: return '😃';
+      case 5: return '⚡';
+      default: return '😌';
+    }
   };
 
-  const getEnergyLabel = (energy: CheckIn['energy']) => {
-    const labels = ['Very Low', 'Low', 'Neutral', 'High', 'Very High'];
-    return labels[energy - 1];
+  const getEnergyColor = (energy: number) => {
+    if (energy >= 4) return 'text-green-600';
+    if (energy >= 3) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
-  const filteredCheckIns = checkIns.filter(checkIn => {
-    const clientName = getClientName(checkIn.clientId);
-    const matchesSearch = clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         checkIn.notes?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === 'all' || checkIn.type === filterType;
-    const matchesClient = selectedClient === 'all' || checkIn.clientId === selectedClient;
-    
-    return matchesSearch && matchesType && matchesClient;
-  });
+  const getSleepColor = (sleep: number) => {
+    if (sleep >= 7) return 'text-green-600';
+    if (sleep >= 6) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getWaterColor = (water: number) => {
+    if (water >= 8) return 'text-green-600';
+    if (water >= 6) return 'text-yellow-600';
+    return 'text-red-600';
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Check-ins</h1>
-          <p className="text-gray-600">Monitor client progress and well-being</p>
-        </div>
-        <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus className="h-5 w-5 mr-2" />
-          New Check-in
-        </button>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search check-ins..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
+    <Layout userRole="coach">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Client Check-ins</h1>
+            <p className="text-gray-600">Monitor client daily wellness and progress</p>
           </div>
-          <div className="flex gap-2">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Types</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-            <select
-              value={selectedClient}
-              onChange={(e) => setSelectedClient(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Clients</option>
-              {clients.map(client => (
-                <option key={client.id} value={client.id}>{client.name}</option>
-              ))}
-            </select>
-            <button className="flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              <Filter className="h-5 w-5 mr-2" />
-              More Filters
+          <div className="flex items-center space-x-3">
+            <button className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <Calendar className="h-4 w-4 mr-2" />
+              Filter by Date
+            </button>
+            <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Send Reminder
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Check-ins List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredCheckIns.map((checkIn) => (
-          <div key={checkIn.id} className="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
-            <div className="p-6">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center">
-                  <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-700">
-                      {getClientName(checkIn.clientId).charAt(0)}
-                    </span>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {getClientName(checkIn.clientId)}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {checkIn.type.charAt(0).toUpperCase() + checkIn.type.slice(1)} Check-in
-                    </p>
-                  </div>
-                </div>
-                <button className="p-2 text-gray-400 hover:text-gray-600">
-                  <MoreVertical className="h-5 w-5" />
-                </button>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Users className="h-6 w-6 text-blue-600" />
               </div>
-
-              {/* Date */}
-              <div className="flex items-center text-sm text-gray-600 mb-4">
-                <Calendar className="h-4 w-4 mr-2" />
-                {checkIn.date.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Total Clients</p>
+                <p className="text-2xl font-bold text-gray-900">4</p>
               </div>
-
-              {/* Mood and Energy */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="flex items-center">
-                  <Smile className="h-5 w-5 text-yellow-500 mr-2" />
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {getMoodEmoji(checkIn.mood)} {getMoodLabel(checkIn.mood)}
-                    </div>
-                    <div className="text-xs text-gray-600">Mood</div>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <Battery className="h-5 w-5 text-green-500 mr-2" />
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {getEnergyLabel(checkIn.energy)}
-                    </div>
-                    <div className="text-xs text-gray-600">Energy</div>
-                  </div>
-                </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-
-              {/* Sleep and Water */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="flex items-center">
-                  <Moon className="h-5 w-5 text-blue-500 mr-2" />
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {checkIn.sleep}h
-                    </div>
-                    <div className="text-xs text-gray-600">Sleep</div>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <Droplets className="h-5 w-5 text-cyan-500 mr-2" />
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {checkIn.water} glasses
-                    </div>
-                    <div className="text-xs text-gray-600">Water</div>
-                  </div>
-                </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Completed Today</p>
+                <p className="text-2xl font-bold text-gray-900">3</p>
               </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <AlertCircle className="h-6 w-6 text-yellow-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Pending</p>
+                <p className="text-2xl font-bold text-gray-900">1</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <TrendingUp className="h-6 w-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Avg Mood</p>
+                <p className="text-2xl font-bold text-gray-900">3.5</p>
+                <p className="text-sm text-gray-500">out of 5</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Photos */}
-              {checkIn.photos && checkIn.photos.length > 0 && (
-                <div className="mb-4">
-                  <div className="flex items-center text-sm text-gray-600 mb-2">
-                    <Camera className="h-4 w-4 mr-2" />
-                    Progress Photos ({checkIn.photos.length})
-                  </div>
-                  <div className="flex space-x-2">
-                    {checkIn.photos.slice(0, 3).map((photo, index) => (
-                      <div key={index} className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <Camera className="h-6 w-6 text-gray-400" />
+        {/* Check-ins List */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Check-ins</h2>
+          </div>
+          <div className="divide-y divide-gray-200">
+            {checkIns.map((checkIn) => (
+              <div key={checkIn.id} className="p-6 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span className="text-blue-600 font-semibold">
+                          {checkIn.clientName.split(' ').map(n => n[0]).join('')}
+                        </span>
                       </div>
-                    ))}
-                    {checkIn.photos.length > 3 && (
-                      <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <span className="text-xs text-gray-600">+{checkIn.photos.length - 3}</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">{checkIn.clientName}</h3>
+                        <span className="text-sm text-gray-500">
+                          {new Date(checkIn.date).toLocaleDateString()}
+                        </span>
+                        {checkIn.completed ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-yellow-600" />
+                        )}
                       </div>
+                      
+                      {/* Wellness Metrics */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                        <div className="text-center">
+                          <div className={`text-2xl mb-1 ${getMoodColor(checkIn.mood)}`}>
+                            {getMoodEmoji(checkIn.mood)}
+                          </div>
+                          <div className="text-sm text-gray-600">Mood: {checkIn.mood}/5</div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`text-2xl mb-1 ${getEnergyColor(checkIn.energy)}`}>
+                            {getEnergyEmoji(checkIn.energy)}
+                          </div>
+                          <div className="text-sm text-gray-600">Energy: {checkIn.energy}/5</div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`text-lg font-semibold mb-1 ${getSleepColor(checkIn.sleep)}`}>
+                            {checkIn.sleep}h
+                          </div>
+                          <div className="text-sm text-gray-600">Sleep</div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`text-lg font-semibold mb-1 ${getWaterColor(checkIn.water)}`}>
+                            {checkIn.water}
+                          </div>
+                          <div className="text-sm text-gray-600">Water glasses</div>
+                        </div>
+                      </div>
+
+                      {/* Weight and Notes */}
+                      <div className="flex items-center space-x-4 mb-2">
+                        {checkIn.weight && (
+                          <div className="text-sm text-gray-600">
+                            <span className="font-medium">Weight:</span> {checkIn.weight} lbs
+                          </div>
+                        )}
+                        {checkIn.submittedAt && (
+                          <div className="text-sm text-gray-500">
+                            <Clock className="h-4 w-4 inline mr-1" />
+                            Submitted {new Date(checkIn.submittedAt).toLocaleTimeString()}
+                          </div>
+                        )}
+                      </div>
+
+                      {checkIn.notes && (
+                        <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                          {checkIn.notes}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                      <MessageSquare className="h-4 w-4" />
+                    </button>
+                    {!checkIn.completed && (
+                      <button className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors">
+                        Send Reminder
+                      </button>
                     )}
                   </div>
                 </div>
-              )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-              {/* Notes */}
-              {checkIn.notes && (
-                <div className="mb-4">
-                  <div className="flex items-start">
-                    <MessageSquare className="h-4 w-4 text-gray-400 mr-2 mt-0.5" />
-                    <p className="text-sm text-gray-600">{checkIn.notes}</p>
-                  </div>
+        {/* Wellness Insights */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Wellness Trends</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div>
+                  <p className="font-medium text-gray-900">Average Sleep Quality</p>
+                  <p className="text-sm text-gray-600">6.6 hours this week</p>
                 </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex space-x-2 pt-4 border-t border-gray-200">
-                <button className="flex-1 flex items-center justify-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Details
-                </button>
-                <button className="px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Edit className="h-4 w-4" />
-                </button>
+                <TrendingUp className="h-5 w-5 text-green-600" />
+              </div>
+              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div>
+                  <p className="font-medium text-gray-900">Hydration Rate</p>
+                  <p className="text-sm text-gray-600">7.5 glasses average</p>
+                </div>
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+              </div>
+              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                <div>
+                  <p className="font-medium text-gray-900">Mood Stability</p>
+                  <p className="text-sm text-gray-600">Needs improvement</p>
+                </div>
+                <AlertCircle className="h-5 w-5 text-yellow-600" />
               </div>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Empty State */}
-      {filteredCheckIns.length === 0 && (
-        <div className="text-center py-12">
-          <div className="h-24 w-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <Calendar className="h-12 w-12 text-gray-400" />
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Client Concerns</h3>
+            <div className="space-y-3">
+              <div className="p-3 bg-red-50 border-l-4 border-red-400 rounded-lg">
+                <p className="font-medium text-gray-900">Mike Johnson</p>
+                <p className="text-sm text-gray-600">Low mood and energy - needs support</p>
+                <p className="text-xs text-gray-500 mt-1">2 days ago</p>
+              </div>
+              <div className="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
+                <p className="font-medium text-gray-900">Sarah Wilson</p>
+                <p className="text-sm text-gray-600">Missing check-ins - send reminder</p>
+                <p className="text-xs text-gray-500 mt-1">Today</p>
+              </div>
+              <div className="p-3 bg-green-50 border-l-4 border-green-400 rounded-lg">
+                <p className="font-medium text-gray-900">Jane Smith</p>
+                <p className="text-sm text-gray-600">Excellent progress - keep it up!</p>
+                <p className="text-xs text-gray-500 mt-1">Today</p>
+              </div>
+            </div>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {searchTerm || filterType !== 'all' || selectedClient !== 'all' ? 'No check-ins found' : 'No check-ins recorded'}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {searchTerm || filterType !== 'all' || selectedClient !== 'all'
-              ? 'Try adjusting your search or filter criteria'
-              : 'Start tracking client progress with regular check-ins'
-            }
-          </p>
-          {(!searchTerm && filterType === 'all' && selectedClient === 'all') && (
-            <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <Plus className="h-5 w-5 mr-2" />
-              Record Your First Check-in
-            </button>
-          )}
         </div>
-      )}
-    </div>
+      </div>
+    </Layout>
   );
 }
