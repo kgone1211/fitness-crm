@@ -2,40 +2,37 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import CoachDashboard from '@/components/CoachDashboard';
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
-  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && user) {
-      if (user.role !== 'coach') {
-        router.push('/client');
-      }
+    // Check if we're in a Whop iframe or have Whop context
+    const isWhopContext = window.location.search.includes('whop') || 
+                         window.parent !== window ||
+                         document.referrer.includes('whop.com') ||
+                         window.location.hostname.includes('whop');
+    
+    if (isWhopContext) {
+      router.push('/whop');
+    } else {
+      // For direct access, show a landing page
+      router.push('/landing');
     }
-  }, [user, isLoading, router]);
+  }, [router]);
 
-  if (isLoading) {
-    return (
+  return (
+    <Layout userRole="coach">
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
-    );
-  }
-
-  if (!user || user.role !== 'coach') {
-    return null;
-  }
-
-  return (
-    <Layout userRole="coach">
-      <CoachDashboard />
     </Layout>
   );
 }

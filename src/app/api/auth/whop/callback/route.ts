@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     // Store user data in session/localStorage (you might want to use a proper session store)
     // For now, we'll redirect to the main app and let the client-side handle the user data
     
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/?auth_success=true`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/whop?auth_success=true&user=${encodeURIComponent(JSON.stringify(userData))}`);
     
   } catch (error) {
     console.error('Whop auth callback error:', error);

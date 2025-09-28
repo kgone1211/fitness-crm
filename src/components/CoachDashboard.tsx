@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-// import WhopIntegration from '@/components/WhopIntegration';
 import {
   Users,
   Calendar,
@@ -119,7 +118,6 @@ export default function CoachDashboard() {
 
   return (
     <>
-      // <WhopIntegration />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
