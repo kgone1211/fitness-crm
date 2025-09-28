@@ -29,11 +29,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
+        <WhopWrapper>
+            <ThemeProvider>
           <GoalsProvider>
             {children}
           </GoalsProvider>
         </ThemeProvider>
+          </WhopWrapper>
       </body>
     </html>
   );
