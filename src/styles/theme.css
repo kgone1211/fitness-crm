@@ -1,0 +1,152 @@
+/* Dynamic Theme Variables */
+:root {
+  /* Default brand colors - will be overridden by JavaScript */
+  --brand-primary: #3B82F6;
+  --brand-secondary: #1E40AF;
+  --brand-accent: #F59E0B;
+  --brand-background: #FFFFFF;
+  --brand-text: #1F2937;
+  --brand-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Apply theme colors to common elements */
+.bg-brand-primary {
+  background-color: var(--brand-primary);
+}
+
+.bg-brand-secondary {
+  background-color: var(--brand-secondary);
+}
+
+.bg-brand-accent {
+  background-color: var(--brand-accent);
+}
+
+.bg-brand-background {
+  background-color: var(--brand-background);
+}
+
+.text-brand-primary {
+  color: var(--brand-primary);
+}
+
+.text-brand-secondary {
+  color: var(--brand-secondary);
+}
+
+.text-brand-accent {
+  color: var(--brand-accent);
+}
+
+.text-brand-text {
+  color: var(--brand-text);
+}
+
+.border-brand-primary {
+  border-color: var(--brand-primary);
+}
+
+.border-brand-secondary {
+  border-color: var(--brand-secondary);
+}
+
+.border-brand-accent {
+  border-color: var(--brand-accent);
+}
+
+/* Hover states */
+.hover\:bg-brand-primary:hover {
+  background-color: var(--brand-primary);
+}
+
+.hover\:bg-brand-secondary:hover {
+  background-color: var(--brand-secondary);
+}
+
+.hover\:bg-brand-accent:hover {
+  background-color: var(--brand-accent);
+}
+
+.hover\:text-brand-primary:hover {
+  color: var(--brand-primary);
+}
+
+.hover\:text-brand-secondary:hover {
+  color: var(--brand-secondary);
+}
+
+.hover\:text-brand-accent:hover {
+  color: var(--brand-accent);
+}
+
+/* Focus states */
+.focus\:ring-brand-primary:focus {
+  --tw-ring-color: var(--brand-primary);
+}
+
+.focus\:ring-brand-secondary:focus {
+  --tw-ring-color: var(--brand-secondary);
+}
+
+.focus\:ring-brand-accent:focus {
+  --tw-ring-color: var(--brand-accent);
+}
+
+/* Custom button styles */
+.btn-brand-primary {
+  background-color: var(--brand-primary);
+  color: white;
+}
+
+.btn-brand-primary:hover {
+  background-color: color-mix(in srgb, var(--brand-primary) 85%, black);
+}
+
+.btn-brand-secondary {
+  background-color: var(--brand-secondary);
+  color: white;
+}
+
+.btn-brand-secondary:hover {
+  background-color: color-mix(in srgb, var(--brand-secondary) 85%, black);
+}
+
+.btn-brand-accent {
+  background-color: var(--brand-accent);
+  color: white;
+}
+
+.btn-brand-accent:hover {
+  background-color: color-mix(in srgb, var(--brand-accent) 85%, black);
+}
+
+/* Sidebar styling */
+.sidebar-brand {
+  background-color: var(--brand-primary);
+}
+
+.sidebar-brand .text-white {
+  color: white;
+}
+
+.sidebar-brand .hover\:bg-opacity-10:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Card styling with brand colors */
+.card-brand {
+  background-color: var(--brand-background);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Text styling */
+.font-brand {
+  font-family: var(--brand-font-family);
+}
+
+/* Apply brand font to body */
+body {
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  background-color: var(--brand-background);
+}

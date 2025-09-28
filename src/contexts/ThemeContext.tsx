@@ -2,74 +2,86 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-interface ColorScheme {
-  primary: string;
-  secondary: string;
-  accent: string;
-  success: string;
-  warning: string;
-  error: string;
-  background: string;
-  surface: string;
-  text: string;
-  textSecondary: string;
-  custom1?: string;
-  custom2?: string;
-  custom3?: string;
+interface BrandSettings {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  backgroundColor: string;
+  textColor: string;
+  logo: string;
+  companyName: string;
+  tagline: string;
+  fontFamily: string;
 }
 
 interface ThemeContextType {
-  colors: ColorScheme;
-  setColors: (colors: ColorScheme) => void;
-  resetColors: () => void;
+  brandSettings: BrandSettings;
+  updateBrandSettings: (settings: Partial<BrandSettings>) => void;
+  resetBrandSettings: () => void;
 }
 
-const defaultColors: ColorScheme = {
-  primary: '#3B82F6',    // Blue
-  secondary: '#6B7280',  // Gray
-  accent: '#8B5CF6',     // Purple
-  success: '#10B981',    // Green
-  warning: '#F59E0B',    // Amber
-  error: '#EF4444',      // Red
-  background: '#F9FAFB', // Light gray
-  surface: '#FFFFFF',    // White
-  text: '#111827',       // Dark gray
-  textSecondary: '#6B7280', // Medium gray
-  custom1: '#FF6B6B',    // Custom red
-  custom2: '#4ECDC4',    // Custom teal
-  custom3: '#45B7D1'     // Custom blue
+const defaultBrandSettings: BrandSettings = {
+  primaryColor: '#3B82F6',
+  secondaryColor: '#1E40AF',
+  accentColor: '#F59E0B',
+  backgroundColor: '#FFFFFF',
+  textColor: '#1F2937',
+  logo: '',
+  companyName: 'FitCoach Pro',
+  tagline: 'Transform Your Fitness Journey',
+  fontFamily: 'Inter'
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [colors, setColorsState] = useState<ColorScheme>(defaultColors);
+  const [brandSettings, setBrandSettings] = useState<BrandSettings>(defaultBrandSettings);
 
+  // Load saved settings from localStorage on mount
   useEffect(() => {
-    // Load saved colors from localStorage
-    const savedColors = localStorage.getItem('fitness-crm-colors');
-    if (savedColors) {
+    const savedSettings = localStorage.getItem('brandSettings');
+    if (savedSettings) {
       try {
-        const parsedColors = JSON.parse(savedColors);
-        setColorsState(parsedColors);
+        const parsed = JSON.parse(savedSettings);
+        setBrandSettings({ ...defaultBrandSettings, ...parsed });
       } catch (error) {
-        console.error('Error loading saved colors:', error);
+        console.error('Error loading saved brand settings:', error);
       }
     }
   }, []);
 
-  const setColors = (newColors: ColorScheme) => {
-    setColorsState(newColors);
-    localStorage.setItem('fitness-crm-colors', JSON.stringify(newColors));
+  // Apply CSS variables when brand settings change
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    // Apply color variables
+    root.style.setProperty('--brand-primary', brandSettings.primaryColor);
+    root.style.setProperty('--brand-secondary', brandSettings.secondaryColor);
+    root.style.setProperty('--brand-accent', brandSettings.accentColor);
+    root.style.setProperty('--brand-background', brandSettings.backgroundColor);
+    root.style.setProperty('--brand-text', brandSettings.textColor);
+    root.style.setProperty('--brand-font-family', `'${brandSettings.fontFamily}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`);
+    
+    // Apply font family to body
+    document.body.style.fontFamily = `'${brandSettings.fontFamily}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+    
+  }, [brandSettings]);
+
+  const updateBrandSettings = (newSettings: Partial<BrandSettings>) => {
+    const updatedSettings = { ...brandSettings, ...newSettings };
+    setBrandSettings(updatedSettings);
+    
+    // Save to localStorage
+    localStorage.setItem('brandSettings', JSON.stringify(updatedSettings));
   };
 
-  const resetColors = () => {
-    setColorsState(defaultColors);
-    localStorage.setItem('fitness-crm-colors', JSON.stringify(defaultColors));
+  const resetBrandSettings = () => {
+    setBrandSettings(defaultBrandSettings);
+    localStorage.setItem('brandSettings', JSON.stringify(defaultBrandSettings));
   };
 
   return (
-    <ThemeContext.Provider value={{ colors, setColors, resetColors }}>
+    <ThemeContext.Provider value={{ brandSettings, updateBrandSettings, resetBrandSettings }}>
       {children}
     </ThemeContext.Provider>
   );

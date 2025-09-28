@@ -260,13 +260,6 @@ ${measurements.map(client =>
             <p className="text-gray-600">Track client body measurements and progress</p>
           </div>
           <div className="flex items-center space-x-3">
-            <button
-              onClick={handleFilter}
-              className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </button>
             <button 
               onClick={handleExportData}
               className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -768,42 +761,6 @@ ${measurements.map(client =>
             </div>
           </div>
         </div>
-
-        {/* Filter Modal */}
-        {showFilterModal && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full mx-4 relative">
-              <button
-                onClick={() => setShowFilterModal(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-              
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Filter Measurements</h3>
-              
-              <div className="space-y-4">
-                {[
-                  { value: 'all', label: 'All Clients' },
-                  { value: 'recent', label: 'Recent Measurements (Last 7 days)' },
-                  { value: 'progress', label: 'Showing Progress' },
-                  { value: 'weight-loss', label: 'Weight Loss' },
-                  { value: 'muscle-gain', label: 'Muscle Gain' },
-                  { value: 'body-fat-reduction', label: 'Body Fat Reduction' },
-                  { value: 'needs-measurements', label: 'Needs New Measurements' },
-                ].map((filter) => (
-                  <button
-                    key={filter.value}
-                    onClick={() => handleApplyFilter(filter.label)}
-                    className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    {filter.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </Layout>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useGoals } from '@/contexts/GoalsContext';
 import { useRouter } from 'next/navigation';
 import Layout from '@/components/Layout';
 import { 
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function ClientDashboard() {
+  const { goals, getGoalsByClient, updateGoalProgress, completeGoal } = useGoals();
   const [client, setClient] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);

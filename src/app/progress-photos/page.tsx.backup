@@ -99,12 +99,10 @@ export default function ProgressPhotosPage() {
 
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [showComparisonModal, setShowComparisonModal] = useState(false);
   const [selectedClients, setSelectedClients] = useState<string[]>([]);
   const [requestMessage, setRequestMessage] = useState('');
   const [requestDueDate, setRequestDueDate] = useState('');
   const [photoTypes, setPhotoTypes] = useState<string[]>(['front', 'side', 'back']);
-  const [selectedClientForComparison, setSelectedClientForComparison] = useState<ClientPhoto | null>(null);
 
   const clients = [
     { id: '1', name: 'John Doe' },
@@ -170,6 +168,10 @@ export default function ProgressPhotosPage() {
     alert(`Downloading all photos for ${client.clientName}...\n\nThis would download a ZIP file containing all ${client.totalPhotos} photos.`);
   };
 
+  const handleViewPhoto = (photo: Photo, clientName: string) => {
+    alert(`Viewing photo for ${clientName}\n\nType: ${photo.type}\nDate: ${photo.date}\nWeight: ${photo.weight} lbs\nNotes: ${photo.notes}`);
+  };
+
   const handleComparePhotos = (client: ClientPhoto) => {
     if (client.photos.length < 2) {
       alert(`${client.clientName} needs at least 2 photos to compare. Current photos: ${client.photos.length}`);
@@ -177,10 +179,6 @@ export default function ProgressPhotosPage() {
     }
     setSelectedClientForComparison(client);
     setShowComparisonModal(true);
-  };
-
-  const handleViewPhoto = (photo: Photo, clientName: string) => {
-    alert(`Viewing photo for ${clientName}\n\nType: ${photo.type}\nDate: ${photo.date}\nWeight: ${photo.weight} lbs\nNotes: ${photo.notes}`);
   };
 
   const handleDownloadPhoto = (photo: Photo, clientName: string) => {
@@ -316,13 +314,6 @@ export default function ProgressPhotosPage() {
                       <Eye className="h-4 w-4" />
                     </button>
                     <button 
-                      onClick={() => handleComparePhotos(client)}
-                      className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                      title="Compare Photos"
-                    >
-                      <GitCompare className="h-4 w-4" />
-                    </button>
-                    <button 
                       onClick={() => handleDownloadPhotos(client)}
                       className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                       title="Download All Photos"
@@ -381,89 +372,6 @@ export default function ProgressPhotosPage() {
             </div>
           ))}
         </div>
-
-        {/* Photo Comparison Modal */}
-        {showComparisonModal && selectedClientForComparison && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
-            <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 relative">
-              <button
-                onClick={() => setShowComparisonModal(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
-              >
-                <X className="h-6 w-6" />
-              </button>
-              
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Progress Photo Comparison - {selectedClientForComparison.clientName}</h3>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {selectedClientForComparison.photos.map((photo, index) => (
-                    <div key={photo.id} className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-lg font-semibold text-gray-900 capitalize">{photo.type} View</h4>
-                        <span className="text-sm text-gray-500">{new Date(photo.date).toLocaleDateString()}</span>
-                      </div>
-                      <div className="aspect-[3/4] bg-gray-200 rounded-lg overflow-hidden">
-                        <img
-                          src={photo.url}
-                          alt={`${selectedClientForComparison.clientName} - ${photo.type}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">Weight</span>
-                          <span className="text-sm font-semibold text-gray-900">{photo.weight} lbs</span>
-                        </div>
-                        <p className="text-sm text-gray-600">{photo.notes}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Comparison Analysis</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{selectedClientForComparison.photos.length}</div>
-                      <div className="text-sm text-gray-600">Photos to Compare</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">{selectedClientForComparison.progress}</div>
-                      <div className="text-sm text-gray-600">Overall Progress</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {selectedClientForComparison.photos.length > 1 ? 
-                          Math.round((new Date(selectedClientForComparison.photos[selectedClientForComparison.photos.length - 1].date).getTime() - new Date(selectedClientForComparison.photos[0].date).getTime()) / (1000 * 60 * 60 * 24)) : 0}
-                      </div>
-                      <div className="text-sm text-gray-600">Days Between Photos</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-6 flex justify-end space-x-3">
-                  <button
-                    onClick={() => setShowComparisonModal(false)}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Close
-                  </button>
-                  <button
-                    onClick={() => {
-                      alert('Exporting comparison analysis...');
-                      setShowComparisonModal(false);
-                    }}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <Download className="h-4 w-4 mr-2 inline" />
-                    Export Comparison
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Request Photos Modal */}
         {showRequestModal && (

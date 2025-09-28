@@ -11,12 +11,16 @@ interface LayoutProps {
 export default function Layout({ children, userRole = 'coach' }: LayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  const toggleCollapsed = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar 
-        userRole={userRole} 
-        isCollapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        collapsed={sidebarCollapsed}
+        toggleCollapsed={toggleCollapsed}
+        userRole={userRole}
       />
       
       {/* Main content with proper spacing */}
