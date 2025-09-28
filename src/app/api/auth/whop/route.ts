@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const WHOP_CLIENT_ID = process.env.NEXT_PUBLIC_WHOP_APP_ID || process.env.WHOP_CLIENT_ID;
+  const WHOP_CLIENT_ID = process.env.WHOP_CLIENT_ID;
   const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   if (!WHOP_CLIENT_ID) {
