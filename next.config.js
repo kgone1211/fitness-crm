@@ -9,15 +9,15 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/whop/:path*',
+        source: '/(.*)',
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'ALLOWALL',
+            value: '',
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://*.whop.com https://*.whop.io",
+            value: "frame-ancestors 'self' https://*.whop.com https://*.whop.io https://whop.com",
           },
         ],
       },
