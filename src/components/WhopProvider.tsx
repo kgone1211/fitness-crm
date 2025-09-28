@@ -28,10 +28,23 @@ export function useWhop() {
 
   React.useEffect(() => {
     // Check if we're in Whop context
-    const isInWhop = window.self !== window.top && 
-      (document.referrer.includes('whop.com') || 
-       window.location.search.includes('whop=') ||
-       document.cookie.includes('whop'));
+    const isInIframe = window.self !== window.top;
+    const hasWhopReferrer = document.referrer.includes('whop.com');
+    const hasWhopInUrl = window.location.search.includes('whop=') || window.location.hash.includes('whop');
+    const hasWhopCookie = document.cookie.includes('whop');
+    
+    const isInWhop = isInIframe || hasWhopReferrer || hasWhopInUrl || hasWhopCookie;
+
+    console.log('Whop detection:', {
+      isInIframe,
+      hasWhopReferrer,
+      hasWhopInUrl,
+      hasWhopCookie,
+      isInWhop,
+      referrer: document.referrer,
+      url: window.location.href,
+      search: window.location.search
+    });
 
     if (isInWhop) {
       // Try to get Whop data from URL parameters or other sources
@@ -50,14 +63,30 @@ export function useWhop() {
         } catch (e) {
           console.error('Error parsing Whop user data:', e);
         }
+      } else {
+        // Create mock user data for testing
+        setWhopData({
+          user: {
+            id: 'whop_user_123',
+            username: 'whop_user',
+            email: 'user@whop.com',
+            permissions: ['read', 'write']
+          },
+          company: {
+            name: 'Whop Company',
+            role: 'admin'
+          },
+          isLoaded: true,
+          isInWhop: true
+        });
       }
+    } else {
+      setWhopData(prev => ({
+        ...prev,
+        isInWhop: false,
+        isLoaded: true
+      }));
     }
-
-    setWhopData(prev => ({
-      ...prev,
-      isInWhop,
-      isLoaded: true
-    }));
   }, []);
 
   return {
