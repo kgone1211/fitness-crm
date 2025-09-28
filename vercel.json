@@ -5,12 +5,8 @@
       "source": "/(.*)",
       "headers": [
         {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
           "key": "Content-Security-Policy",
-          "value": "frame-ancestors 'self' https://*.whop.com https://*.whop.io"
+          "value": "frame-ancestors 'self' https://*.whop.com https://*.whop.io https://whop.com"
         }
       ]
     }
